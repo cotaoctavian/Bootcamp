@@ -1,7 +1,12 @@
 #include <stdio.h>
 #include <stdint.h>
 
-void printBits(uint32_t value)
+/* 
+    * @brief Converting from base 10 to base 2.
+    * @param[in] uint32_t value - integer in base 10
+*/
+
+void print_bits(uint32_t value)
 {
     for (unsigned bit = 1u << 31; bit != 0; bit >>= 1) 
     {
@@ -13,6 +18,6 @@ void printBits(uint32_t value)
 
 int main() 
 { 
-    printBits(16);
+    print_bits(16);
     return 0;
 }
