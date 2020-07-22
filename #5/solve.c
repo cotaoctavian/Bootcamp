@@ -52,7 +52,6 @@ int serializeData(COMPONENT_DATA *component_info, void *buffer, size_t buffer_si
 					 - size_t buffer_size stores the size of the serialized buffer	
 
 	* return - returns the size of the deserialized data
-
 */
 int deserialized_data(void *buffer, size_t buffer_size, COMPONENT_DATA *component_info, int *result)
 {
