@@ -160,7 +160,7 @@ int main() {
 
     char *command = (char *) malloc (COMMAND_SIZE);
     char *response = (char *) malloc (RESPONSE_SIZE); 
-    char *currentFile = (char *) malloc (RESPONSE_SIZE);
+    char *current_file = (char *) malloc (RESPONSE_SIZE);
     bool access = false;
 
     printf("Hi, I'm your editor! =)\n");
@@ -192,7 +192,7 @@ int main() {
 
             response[strcspn(response, "\n")] = 0;
 
-            strcpy(currentFile, response);
+            strcpy(current_file, response);
 
             file = fopen(response, "r+");
 
@@ -217,7 +217,7 @@ int main() {
             printf("\n---------------------------------------\n\n");
 
             access = false; 
-            strcpy(currentFile, "");
+            strcpy(current_file, "");
         }
         /* ----------------------------------- PRINT COMMAND -------------------------------------- */
         else if (strcmp(command, "print") == 0) 
@@ -277,9 +277,9 @@ int main() {
                 int pos = atoi(position);
 
                 /* Allocate sufficient memory for the buffer to hold the text */
-                char *prevText = get_text_content(file);
+                char *prev_text = get_text_content(file);
 
-                if (strcmp(prevText, "NO") == 0) 
+                if (strcmp(prev_text, "NO") == 0) 
                 {
                     printf("Something went wrong..\n");
                 } 
@@ -292,9 +292,9 @@ int main() {
                     fputs(response, file);
 
                     /* Allocate sufficient memory for the buffer to hold the text */
-                    char *currText = get_text_content(file);
+                    char *curr_text = get_text_content(file);
 
-                    if (strcmp(currText, "NO") == 0) 
+                    if (strcmp(curr_text, "NO") == 0) 
                     {
                         printf("Something went wrong..\n");
                     } 
@@ -302,10 +302,10 @@ int main() {
                     {
                         /* Add action to stack */
                         if (!is_full(stack_undo)) 
-                            push(stack_undo, currText, prevText);
+                            push(stack_undo, curr_text, prev_text);
                         
-                        free(currText);
-                        free(prevText);
+                        free(curr_text);
+                        free(prev_text);
                         free(position);
 
                         printf("The text has been written.\n");
@@ -327,20 +327,20 @@ int main() {
             {
                 printf("Write the start position from where you want to delete:\n");
 
-                size_t positionStartSize, positionFinishSize;
+                size_t position_start_size, position_finish_size;
 
                 /* Allocate memory */
-                char *positionStart = (char *) malloc (POSITION_SIZE);
-                char *positionFinish = (char *) malloc (POSITION_SIZE);
+                char *position_start = (char *) malloc (POSITION_SIZE);
+                char *position_finish = (char *) malloc (POSITION_SIZE);
 
                 /* Read data until you get a number */
                 while (true) 
                 {
-                    getline(&positionStart, &positionStartSize, stdin);
+                    getline(&position_start, &position_start_size, stdin);
 
-                    positionStart[strcspn(positionStart, "\n")] = 0;
+                    position_start[strcspn(position_start, "\n")] = 0;
 
-                    if (is_number(positionStart)) break;
+                    if (is_number(position_start)) break;
                     else 
                     {
                         printf("Invalid response. Only numbers accepted. Try again.\n");
@@ -353,11 +353,11 @@ int main() {
                 /* Read data until you get a number */
                 while (true) 
                 {
-                    getline(&positionFinish, &positionFinishSize, stdin);
+                    getline(&position_finish, &position_finish_size, stdin);
 
-                    positionFinish[strcspn(positionFinish, "\n")] = 0;
+                    position_finish[strcspn(position_finish, "\n")] = 0;
 
-                    if (is_number(positionFinish)) break;
+                    if (is_number(position_finish)) break;
                     else 
                     {
                         printf("Invalid response. Only numbers accepted. Try again.\n");
@@ -366,13 +366,13 @@ int main() {
                 }
 
                 /* Save the numbers */
-                int posStart = atoi(positionStart);
-                int posFinish = atoi(positionFinish);
+                int pos_start = atoi(position_start);
+                int pos_finish = atoi(position_finish);
                 
                 /* Allocate sufficient memory for the buffer to hold the text */
-                char *prevText = get_text_content(file);
+                char *prev_text = get_text_content(file);
 
-                if (strcmp(prevText, "NO") == 0) 
+                if (strcmp(prev_text, "NO") == 0) 
                 {
                     printf("Something went wrong..\n");
                 } 
@@ -381,7 +381,7 @@ int main() {
                     fclose(file);
 
                     /* Open it for writing */
-                    file = fopen(currentFile, "w");
+                    file = fopen(current_file, "w");
 
                     // Return if could not open file 
                     if (file == NULL)
@@ -392,31 +392,31 @@ int main() {
                     else 
                     {
                         int i, k = 0;
-                        char currText[256] = "";
-                        for (i = 0; prevText[i] != '\0'; i++) 
+                        char curr_text[256] = "";
+                        for (i = 0; prev_text[i] != '\0'; i++) 
                         {
-                            if (i < posStart || i > posFinish) 
+                            if (i < pos_start || i > pos_finish) 
                             {
-                                fputc(prevText[i], file); 
-                                currText[k++] = prevText[i];
+                                fputc(prev_text[i], file); 
+                                curr_text[k++] = prev_text[i];
                             }
                         }
                         
-                        currText[k] = '\0';
+                        curr_text[k] = '\0';
 
                         /* Add it to the stack */
                         if (!is_full(stack_undo)) 
-                            push(stack_undo, currText, prevText);
+                            push(stack_undo, curr_text, prev_text);
 
                         fclose(file);
 
-                        file = fopen(currentFile, "r+");
+                        file = fopen(current_file, "r+");
 
                         printf("The text has been deleted.\n");
                         printf("\n---------------------------------------\n\n");
 
-                        free(positionStart);
-                        free(positionFinish);
+                        free(position_start);
+                        free(position_finish);
                     }
                 }
             }
@@ -433,18 +433,18 @@ int main() {
             {
                 if (!is_empty(stack_undo)) 
                 { 
-                    char *currData = (char *) malloc (MAX_TEXT_SIZE);
-                    char *prevData = (char *) malloc (MAX_TEXT_SIZE);
+                    char *curr_data = (char *) malloc (MAX_TEXT_SIZE);
+                    char *prev_data = (char *) malloc (MAX_TEXT_SIZE);
 
                     /* Remove action from undo's stack and add it to redo's stack */
-                    if (pop(stack_undo, currData, prevData)) 
+                    if (pop(stack_undo, curr_data, prev_data)) 
                     {
-                        push(stack_redo, prevData, currData);
+                        push(stack_redo, prev_data, curr_data);
                     }
 
                     /* Undo the text from the file too */
                     /* Open it for writing */
-                    file = fopen(currentFile, "w");
+                    file = fopen(current_file, "w");
 
                     // Return if could not open file 
                     if (file == NULL) 
@@ -455,12 +455,12 @@ int main() {
                     else 
                     {
                         fseek(file, 0L, SEEK_SET);	
-                        fputs(prevData, file);
+                        fputs(prev_data, file);
                         fclose(file);
-                        file = fopen(currentFile, "r+");
+                        file = fopen(current_file, "r+");
 
-                        free(prevData);
-                        free(currData);
+                        free(prev_data);
+                        free(curr_data);
 
                         printf("The undo command has been succesfully executed.\n");
                         printf("\n---------------------------------------\n\n");
@@ -486,18 +486,18 @@ int main() {
             {
                 if (!is_empty(stack_redo)) 
                 { 
-                    char *currData = (char *) malloc (MAX_TEXT_SIZE);
-                    char *prevData = (char *) malloc (MAX_TEXT_SIZE);
+                    char *curr_data = (char *) malloc (MAX_TEXT_SIZE);
+                    char *prev_data = (char *) malloc (MAX_TEXT_SIZE);
 
                     /* Remove action from undo's stack and add it to redo's stack */
-                    if (pop(stack_redo, currData, prevData)) 
+                    if (pop(stack_redo, curr_data, prev_data)) 
                     {
-                        push(stack_undo, prevData, currData);
+                        push(stack_undo, prev_data, curr_data);
                     }
 
                     /* Undo the text from the file too */
                     /* Open it for writing */
-                    file = fopen(currentFile, "w");
+                    file = fopen(current_file, "w");
 
                     // Return if could not open file 
                     if (file == NULL) 
@@ -508,12 +508,12 @@ int main() {
                     else 
                     {
                         fseek(file, 0L, SEEK_SET);	
-                        fputs(prevData, file);
+                        fputs(prev_data, file);
                         fclose(file);
-                        file = fopen(currentFile, "r+");
+                        file = fopen(current_file, "r+");
 
-                        free(prevData);
-                        free(currData);
+                        free(prev_data);
+                        free(curr_data);
 
                         printf("The redo command has been succesfully executed.\n");
                         printf("\n---------------------------------------\n\n");
