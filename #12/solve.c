@@ -18,7 +18,7 @@ typedef struct _Map
     * @param[in] - Map map[] stores all the pairs of the type <key, value>
     *            - char *key is the key that we are looking for in the map
 */
-void addKey(Map map[], char *key) 
+void add_key(Map map[], char *key) 
 {
     int i;
     int found = 0;
@@ -43,7 +43,7 @@ void addKey(Map map[], char *key)
     * @brief - Sorts the items from the map based on the value of the keys.
     * @param[in] - Map map[] is the map that is going to be sorted
 */
-void sortItemsByApparitions(Map map[])
+void sort_items_by_apparitions(Map map[])
 {
     int i, j;
     for (i = 0; i < pos - 1; i++) 
@@ -67,7 +67,7 @@ void sortItemsByApparitions(Map map[])
 /* 
     * @brief - This functions prints out all the pairs from the map
 */
-void printItems(Map map[])
+void print_items(Map map[])
 {
     int i;
     for (i = 0; i < pos; i++)
@@ -131,12 +131,12 @@ int main()
     while (token != NULL) 
     {
         //printf("%s\n", token);
-        addKey(map, token);
+        add_key(map, token);
         token = strtok(NULL, s);
     }
 
-    sortItemsByApparitions(map);
-    printItems(map);
+    sort_items_by_apparitions(map);
+    print_items(map);
 
     /* Free the memory we used for the buffer */
     free(buffer);
