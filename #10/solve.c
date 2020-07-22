@@ -1,45 +1,60 @@
 #include <stdio.h>
-#include <pthread.h>
-#include <stdlib.h>
 #include <stdbool.h>
-#include <unistd.h>
-#include <signal.h>
+#include <pthread.h>
 
 #define THREAD_SIZE 10
 
-static bool run = true;
+pthread_mutex_t lock;
 
-void *processing(void *args) {
+void *printInfo(void *args) 
+{
+    /* Lock the thread using mutex */
+    pthread_mutex_lock(&lock);
 
-    int *noOfThread = (int *) args;
+    /* Get the variable from args */
+    int *ptr = (int *) args;    
 
-    printf("%s%d%s\n", "Thread #", *noOfThread, " is working.");
+    printf("Job %d started.\n", *ptr);
 
-    while(run) {
+    printf("Job %d finished.", *ptr);
 
-    }
+    printf("\n------------------------------\n");
 
-    printf("%s%d%s\n", "Thread #", *noOfThread, " stopped.");
+    /* Increment it */
+    (*ptr)++;
+
+    /* Unlock the thread using mutex */
+    pthread_mutex_unlock(&lock);
 
     return NULL;
 }
 
-int main() {
+int main() 
+{
     pthread_t tid[THREAD_SIZE];
-    int v[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+
+    if (pthread_mutex_init(&lock, NULL) != 0) 
+    {
+        printf("\n Something went wrong while initializing the mutex.\n");
+        return 1;
+    }
+
+    printf("------------------------------\n");
 
     int i;
-    for(i = 0; i < THREAD_SIZE; i++) {
-        pthread_create(&tid[i], NULL, processing, &v[i]); 
+    int v = 0;
+    
+    for (i = 0; i < THREAD_SIZE; i++) 
+    {
+        pthread_create(&tid[i], NULL, printInfo, &v);
     }
 
-    sleep(5);
+    for (i = 0; i < THREAD_SIZE; i++) 
+    {
+        pthread_join(tid[i], NULL);
+    }   
 
-    run = false;
-
-    for(i = 0; i < THREAD_SIZE; i++) {
-        pthread_join(tid[i], NULL); 
-    }
-
+    pthread_mutex_destroy(&lock);
+    
     return 0;
 }
