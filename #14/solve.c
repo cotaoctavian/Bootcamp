@@ -19,7 +19,11 @@ Queue *queue;
 char words[256][8] = {"test", "haha", "nu", "queue", "salut", "idk", "buna", "pa"};
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
-/* Initialize queue */
+/* 
+    * @brief - Initialize a new queue. 
+    * @param[in] - unsigned capacity - the parameter that stores the capacity of the queue
+    * @return - returns the initialized queue
+*/
 Queue *init(unsigned capacity) 
 {
     Queue *queue = (Queue *) malloc (sizeof(Queue));
@@ -33,22 +37,34 @@ Queue *init(unsigned capacity)
     return queue;
 }
 
-/* Check if the queue is empty */
-bool isEmpty(Queue *queue) 
+/* 
+    * @brief - Check if the queue is empty.
+    * @param[in] - struct Queue *queue is the queue
+    * @return - returns false/true
+*/
+bool is_empty(Queue *queue) 
 {
     return queue->size == 0;
 }
 
-/* Check if the queue is full */
-bool isFull(Queue *queue) 
+/* 
+    * @brief - Check if the queue is full.
+    * @param[in] - struct Queue *queue is the queue
+    * @return - returns false/true
+*/
+bool is_full(Queue *queue) 
 {
     return queue->size == queue->capacity;
 }
 
-/* Add an item to the queue */
+/* 
+    * @brief - Add an element to queue.
+    * @param[in] - char *message is the item that is going to be added into the queue
+    * @param[in/out] - struct Queue *queue is the modified queue
+*/ 
 void push(Queue *queue, char *message) 
 {
-    if (isFull(queue)) return;
+    if (is_full(queue)) return;
 
     queue->rear = (queue->rear + 1) % queue->capacity;
 
@@ -58,10 +74,14 @@ void push(Queue *queue, char *message)
     queue->size++; 
 } 
 
-/* Remove an item from queue */
+/* 
+    * @brief - Remove top element from queue and return it.
+    * @param[in/out] - struct Queue *queue is the modified queue
+    * @return - returns the removed element or a NULL value in case of an error
+*/
 char *pop(Queue *queue) 
 {
-    if (isEmpty(queue)) return NULL;
+    if (is_empty(queue)) return NULL;
 
     char *item = (char *) malloc (sizeof(queue->message[queue->top]));
     strcpy(item, queue->message[queue->top]);
@@ -72,23 +92,35 @@ char *pop(Queue *queue)
     return item;
 }
 
-/* Get top item from queue */
-int getTop(Queue *queue) 
+/* 
+    * @brief - Get the top element.
+    * @param[in] - struct Queue *queue is the queue
+    * @return - returns the index of the top element or a negative value in case of an error
+*/
+int front(Queue *queue) 
 {
-    if (isEmpty(queue)) return INT32_MIN; 
+    if (is_empty(queue)) return INT32_MIN; 
 
     return queue->top;
 }
 
-/* Get rear item from queue */
-int getRear(Queue *queue) 
+/* 
+    * @brief - Get the rear element.
+    * @param[in] - struct Queue *queue is the queue
+    * @return - returns the index of the rear element or a negative value in case of an error
+*/
+int get_rear(Queue *queue) 
 {
-    if (isEmpty(queue)) return INT32_MIN;
+    if (is_empty(queue)) return INT32_MIN;
 
     return queue->rear;
 }
 
-/* Producer function */
+/*
+    * @brief - This is the producer function that adds elements to the queue
+    * @param[in] - void *args stores the value that is decremented to add n values to the queue
+    * @return - returns NULL
+*/
 void *sendMessage(void *args) 
 {
     pthread_mutex_lock(&lock);
@@ -108,12 +140,15 @@ void *sendMessage(void *args)
     return NULL;
 }
 
-/* Consumer function */
+/* 
+    * @brief - Consumer function that reads the elements from the queue and clears it
+    * @return - returns NULL
+*/
 void *receiveMessage(void *args) 
 {
     pthread_mutex_lock(&lock);
 
-    while (!isEmpty(queue)) 
+    while (!is_empty(queue)) 
     {
         printf("Consumer poped from queue: %s\n", pop(queue));
     }
