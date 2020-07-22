@@ -13,12 +13,15 @@ typedef struct _Map
     int value;  
 } Map;
 
-/* Search for a key, if it's not found, then add it on the map, else increment the value of it. */
+/*
+    * @brief - Search for a key, if it's not found, then add it on the map, else increment the value of it.
+    * @param[in] - Map map[] stores all the pairs of the type <key, value>
+    *            - char *key is the key that we are looking for in the map
+*/
 void addKey(Map map[], char *key) 
 {
     int i;
     int found = 0;
-    
     for (i = 0; i < MAP_SIZE; i++) 
     {
         if (strcmp(map[i].key, key) == 0) 
@@ -36,11 +39,13 @@ void addKey(Map map[], char *key)
     }
 }
 
-
+/*
+    * @brief - Sorts the items from the map based on the value of the keys.
+    * @param[in] - Map map[] is the map that is going to be sorted
+*/
 void sortItemsByApparitions(Map map[])
 {
     int i, j;
-    
     for (i = 0; i < pos - 1; i++) 
     {
         for (j = i + 1; j < pos; j++) 
@@ -59,10 +64,12 @@ void sortItemsByApparitions(Map map[])
     }
 }
 
+/* 
+    * @brief - This functions prints out all the pairs from the map
+*/
 void printItems(Map map[])
 {
     int i;
-    
     for (i = 0; i < pos; i++)
     {
         printf("Apparitions: %d ---> Word: %s\n", map[i].value, map[i].key);
@@ -75,7 +82,6 @@ int main()
     Map map[MAP_SIZE];
     
     int i;
-    
     /* Initialize map with default values. */
     for(i = 0; i < MAP_SIZE; i++) 
     {
