@@ -9,11 +9,12 @@
 typedef struct _COMPONENT_DATA
 {
 	int attributes;
-	char* name;
+	char *name;
 	size_t nameSize;
-}COMPONENT_DATA, *PCOMPONENT_DATA;
+} COMPONENT_DATA, *PCOMPONENT_DATA;
 
-int serializeData(COMPONENT_DATA* componentInfo, void* buffer, size_t bufferSize, int *result) {
+int serializeData(COMPONENT_DATA* componentInfo, void *buffer, size_t bufferSize, int *result) 
+{
 
 	/*
 	componentInfo - IN - has all the members initialized and filled with valid data
@@ -33,14 +34,14 @@ int serializeData(COMPONENT_DATA* componentInfo, void* buffer, size_t bufferSize
 	memcpy(buffer + bufferNext, &componentInfo->nameSize, sizeof(componentInfo->nameSize));
 	bufferNext += sizeof(componentInfo->nameSize);
 
-	if(bufferNext < bufferSize) {
-		*result = 0;
-	} else *result = -1;
+	if (bufferNext < bufferSize) *result = 0;
+	else *result = -1;
 
 	return bufferNext;
 }
 
-int deserializeData(void* buffer, size_t bufferSize, COMPONENT_DATA* componentInfo, int *result) {
+int deserializeData(void *buffer, size_t bufferSize, COMPONENT_DATA *componentInfo, int *result)
+{
 	/*
 	buffer - IN - a buffer that is already allocated and contains the serialized data
 	bufferSize - IN - size in bytes of buffer
@@ -59,23 +60,24 @@ int deserializeData(void* buffer, size_t bufferSize, COMPONENT_DATA* componentIn
 	memcpy(&componentInfo->nameSize, buffer + bufferNext, sizeof(componentInfo->nameSize));
 	bufferNext += sizeof(componentInfo->nameSize);
 
-	if(bufferNext <= bufferSize) *result = 0;
+	if (bufferNext <= bufferSize) *result = 0;
 	else *result = -1;
 
 	return bufferSize;
 } 
 
-int main() {	
+int main() 
+{	
 	int result = INT32_MIN;
 
 	/* Allocating memory to buffer */
-    void* buffer = (void *)malloc(BUFFER_SIZE);
+    void *buffer = (void *) malloc (BUFFER_SIZE);
 
 	/* Check if the memory has been allocated */
-	if(buffer == NULL) return -1;
+	if (buffer == NULL) return -1;
 	
 	/* Allocate memory to struct variable */
-	COMPONENT_DATA *data = (COMPONENT_DATA *)malloc(sizeof(COMPONENT_DATA));
+	COMPONENT_DATA *data = (COMPONENT_DATA *) malloc (sizeof(COMPONENT_DATA));
 
 	data->attributes = 3;
 	data->name = "Test";
@@ -85,9 +87,10 @@ int main() {
 	int bufferSize = serializeData(data, buffer, BUFFER_SIZE, &result);
 
 	/* Check if everything went fine */
-	if(!result) {
+	if (!result)
+	{
 		/* Allocate memory to struct variable */
-		COMPONENT_DATA *copy = (COMPONENT_DATA *)malloc(sizeof(COMPONENT_DATA));
+		COMPONENT_DATA *copy = (COMPONENT_DATA *) malloc (sizeof(COMPONENT_DATA));
 
 		copy->attributes = 0;
 		copy->name = "";
@@ -97,7 +100,8 @@ int main() {
 		int res = deserializeData(buffer, bufferSize, copy, &result);
 
 		/* Check if everything went fine */
-		if(!result) {
+		if (!result) 
+		{
 			printf("The deserialized data is:\n");
 
 			printf("Attributes: %d\n", copy->attributes);
@@ -105,10 +109,14 @@ int main() {
 			printf("Name size: %lu\n", copy->nameSize);
 
 			printf("Size in bytes of the serialized data that must be filled in buffer: %d\n", res);
-		} else {
+		} 
+		else 
+		{
 			printf("Something went wrong while deserializing the data...");
 		}
-	} else {
+	}
+	else 
+	{
 		printf("Something went wrong while serializing the data...");
 	}
 
