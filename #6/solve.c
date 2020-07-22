@@ -13,7 +13,11 @@ struct Queue
     unsigned capacity;
 };
 
-// Initialize a new queue.
+/* 
+    * @brief - Initialize a new queue. 
+    * @param[in] - unsigned capacity - the parameter that stores the capacity of the queue
+    * @return - returns the initialized queue
+*/
 struct Queue *initialize(unsigned capacity) 
 {
     struct Queue *queue = (struct Queue *)malloc(sizeof(struct Queue));
@@ -26,32 +30,48 @@ struct Queue *initialize(unsigned capacity)
     return queue;
 }
 
-// Check if the queue is empty.
-bool isEmpty(struct Queue *queue)
+/* 
+    * @brief - Check if the queue is empty.
+    * @param[in] - struct Queue *queue is the queue
+    * @return - returns false/true
+*/
+bool is_empty(struct Queue *queue)
 {
     return queue->size == 0;
 }
 
-// Check if the queue is full.
-bool isFull(struct Queue *queue) 
+/* 
+    * @brief - Check if the queue is full.
+    * @param[in] - struct Queue *queue is the queue
+    * @return - returns false/true
+*/
+bool is_full(struct Queue *queue) 
 {
     return queue->size == queue->capacity;
 }
 
-// Add an element to queue 
+/* 
+    * @brief - Add an element to queue.
+    * @param[in] - uint32_t value is the item that is going to be added into the queue
+    * @param[in/out] - struct Queue *queue is the modified queue
+*/ 
 void push(struct Queue *queue, uint32_t value) 
 {
-    // Check if the size of the queue is lower than the capacity of it.
-    if (isFull(queue)) return;
+    /* Check if the size of the queue is lower than the capacity of it. */
+    if (is_full(queue)) return;
 
     queue->array[queue->size] = value;
     queue->size += 1;
 }
 
-// Remove top element from queue and return it.
+/* 
+    * @brief - Remove top element from queue and return it.
+    * @param[in/out] - struct Queue *queue is the modified queue
+    * @return - returns the removed element or a negative value in case of an error
+*/
 int pop(struct Queue *queue) 
 {
-    if (isEmpty(queue)) 
+    if (is_empty(queue)) 
     {
         printf("The queue is empty. Invalid operation.");
         return INT32_MIN;
@@ -72,15 +92,22 @@ int pop(struct Queue *queue)
     }
 }
 
-// Get the top element.
+/* 
+    * @brief - Get the top element.
+    * @param[in] - struct Queue *queue is the queue
+    * @return - returns the top element or a negative value in case of an error
+*/
 int front(struct Queue *queue) 
 {
-    if (isEmpty(queue)) return INT32_MIN;
+    if (is_empty(queue)) return INT32_MIN;
     return queue->array[queue->top];
 }
 
-// Print the elements of the queue
-void printQueue(struct Queue *queue)
+/* 
+    * @brief - Print the elements of the queue.
+    * @param[in] - struct Queue *queue is the queue
+*/
+void print_queue(struct Queue *queue)
 {
     int i;
 
@@ -103,11 +130,11 @@ int main() {
     push(queue, 21);
     push(queue, 3);
 
-    printQueue(queue);
+    print_queue(queue);
     printf("The front element is: %d\n", front(queue));
 
     printf("The removed item is: %d\n", pop(queue));
-    printQueue(queue);
+    print_queue(queue);
 
     printf("The front element is: %d\n", front(queue));
 
