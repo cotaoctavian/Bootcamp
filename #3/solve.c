@@ -22,7 +22,8 @@ void handle_data (void (*progress_callback)(int, int), char *data, int data_size
     * @brief - The function is used to print out the progress bar
     * @param[in] - int index is the index of the string
     *            - int data_size is the size of the string
-*/
+*/ 
+
 void progress_bar (int index, int data_size)
 {   
     float temp = ((float) index / (float) data_size);
