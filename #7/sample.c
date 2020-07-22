@@ -14,14 +14,17 @@
     calls allocInLib to obtain int* , sets the value , prints it , and calls freeInLib
 */
 
-int* allocInLib() {
+int *allocInLib() 
+{
     
-    int* value = (int*) malloc(sizeof(int));
+    int *value = (int *) malloc(sizeof(int));
 
     return value; 
 }
 
-void freeInLib(int *value) {
+void freeInLib(int *value) 
+{
     printf("The value is: %d.\nMemory deallocated.\n", *value);
+    
     free(value);
 }
