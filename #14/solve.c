@@ -7,7 +7,8 @@
 
 #define QUEUE_SIZE 8
 
-typedef struct _Queue {
+typedef struct _Queue 
+{
     int top, rear;
     unsigned size, capacity;
     char **message;
@@ -19,8 +20,9 @@ char words[256][8] = {"test", "haha", "nu", "queue", "salut", "idk", "buna", "pa
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 /* Initialize queue */
-Queue* init(unsigned capacity) {
-    Queue* queue = (Queue*) malloc (sizeof(Queue));
+Queue *init(unsigned capacity) 
+{
+    Queue *queue = (Queue *) malloc (sizeof(Queue));
 
     queue->capacity = capacity;
     queue->rear = capacity - 1; 
@@ -32,18 +34,21 @@ Queue* init(unsigned capacity) {
 }
 
 /* Check if the queue is empty */
-bool isEmpty(Queue* queue) {
+bool isEmpty(Queue *queue) 
+{
     return queue->size == 0;
 }
 
 /* Check if the queue is full */
-bool isFull(Queue* queue) {
+bool isFull(Queue *queue) 
+{
     return queue->size == queue->capacity;
 }
 
 /* Add an item to the queue */
-void push(Queue* queue, char *message) {
-    if(isFull(queue)) return;
+void push(Queue *queue, char *message) 
+{
+    if (isFull(queue)) return;
 
     queue->rear = (queue->rear + 1) % queue->capacity;
 
@@ -54,8 +59,9 @@ void push(Queue* queue, char *message) {
 } 
 
 /* Remove an item from queue */
-char* pop(Queue* queue) {
-    if(isEmpty(queue)) return NULL;
+char *pop(Queue *queue) 
+{
+    if (isEmpty(queue)) return NULL;
 
     char *item = (char *) malloc (sizeof(queue->message[queue->top]));
     strcpy(item, queue->message[queue->top]);
@@ -67,23 +73,29 @@ char* pop(Queue* queue) {
 }
 
 /* Get top item from queue */
-int getTop(Queue* queue) {
-    if(isEmpty(queue)) return INT32_MIN; 
+int getTop(Queue *queue) 
+{
+    if (isEmpty(queue)) return INT32_MIN; 
+
     return queue->top;
 }
 
 /* Get rear item from queue */
-int getRear(Queue* queue) {
-    if(isEmpty(queue)) return INT32_MIN; 
+int getRear(Queue *queue) 
+{
+    if (isEmpty(queue)) return INT32_MIN;
+
     return queue->rear;
 }
 
 /* Producer function */
-void *sendMessage(void *args) {
+void *sendMessage(void *args) 
+{
     pthread_mutex_lock(&lock);
     int *noOfItems = (int *) args;
 
-    while(*noOfItems) {
+    while (*noOfItems) 
+    {
         push(queue, words[(*noOfItems) % QUEUE_SIZE]);
         printf("Producer pushed to queue: %s\n", words[(*noOfItems) % QUEUE_SIZE]);
         (*noOfItems)--;
@@ -97,10 +109,12 @@ void *sendMessage(void *args) {
 }
 
 /* Consumer function */
-void *receiveMessage(void *args) {
+void *receiveMessage(void *args) 
+{
     pthread_mutex_lock(&lock);
 
-    while(!isEmpty(queue)) {
+    while (!isEmpty(queue)) 
+    {
         printf("Consumer poped from queue: %s\n", pop(queue));
     }
 
@@ -109,7 +123,8 @@ void *receiveMessage(void *args) {
     return NULL;
 }
 
-int main() {
+int main() 
+{
 
     queue = init(QUEUE_SIZE);
     pthread_t producer;
