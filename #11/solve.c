@@ -62,7 +62,7 @@ bool is_full(Queue *queue)
 
 /* 
     * @brief - Add an element to queue.
-    * @param[in] - uint32_t value is the item that is going to be added into the queue
+    * @param[in] - int value is the item that is going to be added into the queue
     * @param[in/out] - struct Queue *queue is the modified queue
 */ 
 void push(Queue *queue, int value) 
