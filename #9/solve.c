@@ -6,7 +6,12 @@
 
 pthread_mutex_t lock;
 
-void *printInfo(void *args) 
+/* 
+    * @brief - This function prints out the value passed as a parameter and increment it, allowing only to one thread a time to acces the critical section
+    * @param[in] - void *args is the variable that is going to be printed passed as a parameter to thread's function
+    * @return - returns NULL 
+*/
+void *print_info(void *args) 
 {
     /* Lock the thread using mutex */
     pthread_mutex_lock(&lock);
@@ -42,10 +47,9 @@ int main()
 
     int i;
     int v = 0;
-    
     for (i = 0; i < THREAD_SIZE; i++) 
     {
-        pthread_create(&tid[i], NULL, printInfo, &v);
+        pthread_create(&tid[i], NULL, print_info, &v);
     }
 
     for (i = 0; i < THREAD_SIZE; i++) 
