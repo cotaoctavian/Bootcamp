@@ -31,64 +31,90 @@
 /* Stack's struct */
 typedef struct _Stack 
 {
-    int top; // top of the stack
-    unsigned size; // size of the stack
-    char **currentData; // text written/deleted by the action
-    char **previousData; //text before write / delete
+    int top; /* top of the stack */
+    unsigned size; /* size of the stack */
+    char **current_data; /* text written/deleted by the action */
+    char **previous_data; /* text before write / delete */
 }Stack;
 
-/* Initialize a new stack */
+
+/* 
+    * @brief - Initialize a new stack. 
+    * @param[in] - unsigned capacity - the parameter that stores the capacity of the queue
+    * @return - returns the initialized stack.
+*/
 Stack *init(unsigned size) 
 {
     Stack *stack = (Stack *) malloc (sizeof(Stack));
     stack->top = -1;
     stack->size = size;
-    stack->currentData = (char **) malloc (sizeof(char *) * size);
-    stack->previousData = (char **) malloc (sizeof(char *) * size);
+    stack->current_data = (char **) malloc (sizeof(char *) * size);
+    stack->previous_data = (char **) malloc (sizeof(char *) * size);
 
     return stack;
 }
 
-/* Check if the stack is empty */
-bool isEmpty(Stack *stack)
+/* 
+    * @brief - Check if the stack is empty.
+    * @param[in] - Stack *stack is the stack
+    * @return - returns false/true
+*/
+bool is_empty(Stack *stack)
 {
     return stack->top == -1;
 }
 
-/* Check if the stack is full */
-bool isFull(Stack *stack) 
+/* 
+    * @brief - Check if the stack is full.
+    * @param[in] - Stack *stack is the stack
+    * @return - returns false/true
+*/
+bool is_full(Stack *stack) 
 {
     return stack->top == (stack->size - 1);
 }
 
-/* Add item to the stack */
-void push(Stack *stack, char *currentData, char *previousData) 
+/* 
+    * @brief - Add item to the stack
+    * @param[in] - char *current_data and char *previous_data are the items that are going to be added into the stack
+    * @param[in/out] - Stack *stack is the modified stack
+*/
+void push(Stack *stack, char *current_data, char *previous_data) 
 { 
-    if (isFull(stack)) return;
+    if (is_full(stack)) return;
 
     ++stack->top;
-    stack->currentData[stack->top] = (char *) malloc (sizeof(currentData)); 
-    stack->previousData[stack->top] = (char *) malloc (sizeof(previousData)); 
+    stack->current_data[stack->top] = (char *) malloc (sizeof(current_data)); 
+    stack->previous_data[stack->top] = (char *) malloc (sizeof(previous_data)); 
 
-    strcpy(stack->currentData[stack->top], currentData); 
-    strcpy(stack->previousData[stack->top], previousData);
+    strcpy(stack->current_data[stack->top], current_data); 
+    strcpy(stack->previous_data[stack->top], previous_data);
 } 
 
-/* Remove item from stack */
-int pop(Stack *stack, char *currentData, char *previousData) 
+/* 
+    * @brief - Remove item from the stack
+    * @param[in/out] - Stack *stack is going to be modified because of the removed item
+    *                - char *current_data stores the value of the stack->current_data
+    *                - char *previous_data stores the value of the stack->previous_data
+    * @return - returns 1
+*/
+int pop(Stack *stack, char *current_data, char *previous_data) 
 { 
-    if (isEmpty(stack)) return INT32_MIN; 
+    if (is_empty(stack)) return INT32_MIN; 
     
-    strcpy(currentData, stack->currentData[stack->top]);
-    strcpy(previousData, stack->previousData[stack->top]);
+    strcpy(current_data, stack->current_data[stack->top]);
+    strcpy(previous_data, stack->previous_data[stack->top]);
 
     stack->top--;
 
     return 1;
 } 
 
-/* Check if a string is a number */
-bool isNumber(char *str) 
+/* 
+    * @brief - Check if a string is a number.
+    * @return - returns false/true
+*/
+bool is_number(char *str) 
 {
     int i;
     for (i = 0; str[i]; i++) 
@@ -97,7 +123,12 @@ bool isNumber(char *str)
     return true;
 }
 
-char* getTextContent(FILE *f) 
+/* 
+    * @brief - This function gets the text from the file
+    * @param[in] - FILE *f is the pointer of the file
+    * @return - returns the text
+*/
+char* get_text_content(FILE *f) 
 {
      /* Get the number of bytes */
     fseek(f, 0L, SEEK_END);
@@ -195,7 +226,7 @@ int main() {
             {
                 printf("%s\n", "The content of the file is:");
 
-                char *res = getTextContent(file);
+                char *res = get_text_content(file);
                 if (strcmp(res, "NO") == 0) 
                 {
                     printf("Something went wrong..\n");
@@ -235,7 +266,7 @@ int main() {
 
                     position[strcspn(position, "\n")] = 0;
 
-                    if (isNumber(position)) break;
+                    if (is_number(position)) break;
                     else 
                     {
                         printf("Invalid response. Only numbers accepted. Try again.\n");
@@ -246,7 +277,7 @@ int main() {
                 int pos = atoi(position);
 
                 /* Allocate sufficient memory for the buffer to hold the text */
-                char *prevText = getTextContent(file);
+                char *prevText = get_text_content(file);
 
                 if (strcmp(prevText, "NO") == 0) 
                 {
@@ -254,14 +285,14 @@ int main() {
                 } 
                 else 
                 {
-                    /* Set the stream pointer "pos" bytes from the start. */
+                    // Set the stream pointer "pos" bytes from the start.
                     fseek(file, pos, SEEK_SET); 
 
-                    /* Insert response into the file */
+                    // Insert response into the file
                     fputs(response, file);
 
                     /* Allocate sufficient memory for the buffer to hold the text */
-                    char *currText = getTextContent(file);
+                    char *currText = get_text_content(file);
 
                     if (strcmp(currText, "NO") == 0) 
                     {
@@ -270,7 +301,7 @@ int main() {
                     else 
                     {
                         /* Add action to stack */
-                        if (!isFull(stack_undo)) 
+                        if (!is_full(stack_undo)) 
                             push(stack_undo, currText, prevText);
                         
                         free(currText);
@@ -309,7 +340,7 @@ int main() {
 
                     positionStart[strcspn(positionStart, "\n")] = 0;
 
-                    if (isNumber(positionStart)) break;
+                    if (is_number(positionStart)) break;
                     else 
                     {
                         printf("Invalid response. Only numbers accepted. Try again.\n");
@@ -326,7 +357,7 @@ int main() {
 
                     positionFinish[strcspn(positionFinish, "\n")] = 0;
 
-                    if (isNumber(positionFinish)) break;
+                    if (is_number(positionFinish)) break;
                     else 
                     {
                         printf("Invalid response. Only numbers accepted. Try again.\n");
@@ -339,7 +370,7 @@ int main() {
                 int posFinish = atoi(positionFinish);
                 
                 /* Allocate sufficient memory for the buffer to hold the text */
-                char *prevText = getTextContent(file);
+                char *prevText = get_text_content(file);
 
                 if (strcmp(prevText, "NO") == 0) 
                 {
@@ -352,7 +383,7 @@ int main() {
                     /* Open it for writing */
                     file = fopen(currentFile, "w");
 
-                    /* Return if could not open file */ 
+                    // Return if could not open file 
                     if (file == NULL)
                     {
                         printf("%s\n", "The file does not exist. Try another command.");
@@ -374,7 +405,7 @@ int main() {
                         currText[k] = '\0';
 
                         /* Add it to the stack */
-                        if (!isFull(stack_undo)) 
+                        if (!is_full(stack_undo)) 
                             push(stack_undo, currText, prevText);
 
                         fclose(file);
@@ -400,7 +431,7 @@ int main() {
         {
             if (access)
             {
-                if (!isEmpty(stack_undo)) 
+                if (!is_empty(stack_undo)) 
                 { 
                     char *currData = (char *) malloc (MAX_TEXT_SIZE);
                     char *prevData = (char *) malloc (MAX_TEXT_SIZE);
@@ -411,10 +442,11 @@ int main() {
                         push(stack_redo, prevData, currData);
                     }
 
+                    /* Undo the text from the file too */
                     /* Open it for writing */
                     file = fopen(currentFile, "w");
 
-                    /* Return if could not open file */
+                    // Return if could not open file 
                     if (file == NULL) 
                     {
                         printf("No file opened. Open a file to have access to this command.\n");
@@ -452,7 +484,7 @@ int main() {
         {
             if (access) 
             {
-                if (!isEmpty(stack_redo)) 
+                if (!is_empty(stack_redo)) 
                 { 
                     char *currData = (char *) malloc (MAX_TEXT_SIZE);
                     char *prevData = (char *) malloc (MAX_TEXT_SIZE);
@@ -463,10 +495,11 @@ int main() {
                         push(stack_undo, prevData, currData);
                     }
 
+                    /* Undo the text from the file too */
                     /* Open it for writing */
                     file = fopen(currentFile, "w");
 
-                    /* Return if could not open file */ 
+                    // Return if could not open file 
                     if (file == NULL) 
                     {
                         printf("No file opened. Open a file to have access to this command.\n");
