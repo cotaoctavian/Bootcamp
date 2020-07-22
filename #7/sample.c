@@ -3,7 +3,7 @@
 
 /* 
     7. [Linux dynamic libraries] 
-    Create an library called sample.so that exports 2 functions. int* allocInLib() and void freeInLib( int* ).
+    Create an library called sample.so that exports 2 functions. int* alloc_in_lib() and void free_in_lib( int* ).
     These functions allocate/deallocate an integer using malloc/free and print the operation.
 
     Create 2 projects. 
@@ -11,10 +11,15 @@
     using dlopen,dlsym,dlclose api.
 
     In both cases main function declares an int* loads the library if necessary,
-    calls allocInLib to obtain int* , sets the value , prints it , and calls freeInLib
+    calls alloc_in_lib to obtain int* , sets the value , prints it , and calls free_in_lib
 */
 
-int *allocInLib() 
+
+/* 
+    * @brief - This function allocates memory to an integer
+    * @return - returns the allocated variable.
+*/
+int *alloc_in_lib() 
 {
     
     int *value = (int *) malloc(sizeof(int));
@@ -22,7 +27,11 @@ int *allocInLib()
     return value; 
 }
 
-void freeInLib(int *value) 
+/*
+    * @brief - This function deallocates the memory of the variable
+    * @param[in] - The variable that is going to be deallocated.
+*/
+void free_in_lib(int *value) 
 {
     printf("The value is: %d.\nMemory deallocated.\n", *value);
     
