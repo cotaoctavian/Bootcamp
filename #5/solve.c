@@ -10,60 +10,66 @@ typedef struct _COMPONENT_DATA
 {
 	int attributes;
 	char *name;
-	size_t nameSize;
+	size_t name_size;
 } COMPONENT_DATA, *PCOMPONENT_DATA;
 
-int serializeData(COMPONENT_DATA* componentInfo, void *buffer, size_t bufferSize, int *result) 
+/* 
+	* @brief - This function serializes the struct into the buffer.
+	
+	* @param[in] - COMPONENT_DATA *component_info is the parameter that is going to be serialized
+				 - size_t buffer_size is the size of the buffer
+
+	* @param[in/out] - int *result saves 0 if it's a success, non-zero if it's an error
+				 	 - void *buffer is the parameter that stores the serialized data
+					  
+	* @return - The function returns the size of the serialized data
+*/
+int serializeData(COMPONENT_DATA *component_info, void *buffer, size_t buffer_size, int *result) 
 {
+	int buffer_next = 0;
+	memcpy(buffer + buffer_next, &component_info->attributes, sizeof(int));
+	buffer_next += sizeof(int);
 
-	/*
-	componentInfo - IN - has all the members initialized and filled with valid data
-	buffer - IN/OUT - is allocated by the caller before calling this function and will contain the serialized data if big enough
-	bufferSize - IN - size in bytes of the already allocated buffer passed to this function
-	result - IN/OUT - 0 success , non-zero error -> NOT ADDED
-	return value - OUT - size in bytes of the serialized data that must be filled in buffer
-	*/
+	memcpy(buffer + buffer_next, &component_info->name, sizeof(component_info->name));
+	buffer_next += sizeof(component_info->name);
 
-	int bufferNext = 0;
-	memcpy(buffer + bufferNext, &componentInfo->attributes, sizeof(int));
-	bufferNext += sizeof(int);
+	memcpy(buffer + buffer_next, &component_info->name_size, sizeof(component_info->name_size));
+	buffer_next += sizeof(component_info->name_size);
 
-	memcpy(buffer + bufferNext, &componentInfo->name, sizeof(componentInfo->name));
-	bufferNext += sizeof(componentInfo->name);
-
-	memcpy(buffer + bufferNext, &componentInfo->nameSize, sizeof(componentInfo->nameSize));
-	bufferNext += sizeof(componentInfo->nameSize);
-
-	if (bufferNext < bufferSize) *result = 0;
+	if (buffer_next < buffer_size) *result = 0;
 	else *result = -1;
 
-	return bufferNext;
+	return buffer_next;
 }
 
-int deserializeData(void *buffer, size_t bufferSize, COMPONENT_DATA *componentInfo, int *result)
+/* 
+	* @brief - Deserialize the data from buffer and save it into the struct
+
+	* @param[in] - void *buffer stores the serialized buffer
+
+	* @param[in/out] - COMPONENT_DATA *component_info is the struct that is going to be filled with the deserialized data
+					 - int *result saves 0 if it's a success, non-zero if it's an error
+					 - size_t buffer_size stores the size of the serialized buffer	
+
+	* return - returns the size of the deserialized data
+
+*/
+int deserialized_data(void *buffer, size_t buffer_size, COMPONENT_DATA *component_info, int *result)
 {
-	/*
-	buffer - IN - a buffer that is already allocated and contains the serialized data
-	bufferSize - IN - size in bytes of buffer
-	componentInfo - IN/OUT - a valid pointer to a componentInfo that will be initialized with the data contained in the buffer
-	result - IN/OUT - 0 success , non-zero error -> NOT ADDED
-	return value - OUT - size in bytes of the serialized data that must be filled in buffer
-	*/
-
-	int bufferNext = 0;
-	memcpy(&componentInfo->attributes, buffer, sizeof(int));
-	bufferNext += sizeof(int);
+	int buffer_next = 0;
+	memcpy(&component_info->attributes, buffer, sizeof(int));
+	buffer_next += sizeof(int);
 	
-	memcpy(&componentInfo->name, buffer + bufferNext, sizeof(componentInfo->name));
-	bufferNext += sizeof(componentInfo->name);
+	memcpy(&component_info->name, buffer + buffer_next, sizeof(component_info->name));
+	buffer_next += sizeof(component_info->name);
 
-	memcpy(&componentInfo->nameSize, buffer + bufferNext, sizeof(componentInfo->nameSize));
-	bufferNext += sizeof(componentInfo->nameSize);
+	memcpy(&component_info->name_size, buffer + buffer_next, sizeof(component_info->name_size));
+	buffer_next += sizeof(component_info->name_size);
 
-	if (bufferNext <= bufferSize) *result = 0;
+	if (buffer_next <= buffer_size) *result = 0;
 	else *result = -1;
 
-	return bufferSize;
+	return buffer_size;
 } 
 
 int main() 
@@ -81,10 +87,10 @@ int main()
 
 	data->attributes = 3;
 	data->name = "Test";
-	data->nameSize = 4;
+	data->name_size = 4;
 	
 	/* Serialize data */
-	int bufferSize = serializeData(data, buffer, BUFFER_SIZE, &result);
+	int buffer_size = serializeData(data, buffer, BUFFER_SIZE, &result);
 
 	/* Check if everything went fine */
 	if (!result)
@@ -94,10 +100,10 @@ int main()
 
 		copy->attributes = 0;
 		copy->name = "";
-		copy->nameSize = 0;
+		copy->name_size = 0;
 
 		/* Deserialize data */
-		int res = deserializeData(buffer, bufferSize, copy, &result);
+		int res = deserialized_data(buffer, buffer_size, copy, &result);
 
 		/* Check if everything went fine */
 		if (!result) 
@@ -106,7 +112,7 @@ int main()
 
 			printf("Attributes: %d\n", copy->attributes);
 			printf("Name: %s\n", copy->name);
-			printf("Name size: %lu\n", copy->nameSize);
+			printf("Name size: %lu\n", copy->name_size);
 
 			printf("Size in bytes of the serialized data that must be filled in buffer: %d\n", res);
 		} 
