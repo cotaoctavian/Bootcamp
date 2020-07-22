@@ -29,7 +29,8 @@
 */
 
 /* Stack's struct */
-typedef struct _Stack {
+typedef struct _Stack 
+{
     int top; // top of the stack
     unsigned size; // size of the stack
     char **currentData; // text written/deleted by the action
@@ -37,27 +38,31 @@ typedef struct _Stack {
 }Stack;
 
 /* Initialize a new stack */
-Stack* init(unsigned size) {
-    Stack* stack = (Stack *) malloc (sizeof(Stack));
+Stack *init(unsigned size) 
+{
+    Stack *stack = (Stack *) malloc (sizeof(Stack));
     stack->top = -1;
     stack->size = size;
     stack->currentData = (char **) malloc (sizeof(char *) * size);
     stack->previousData = (char **) malloc (sizeof(char *) * size);
+
     return stack;
 }
 
 /* Check if the stack is empty */
-bool isEmpty(Stack* stack) {
+bool isEmpty(Stack *stack)
+{
     return stack->top == -1;
 }
 
 /* Check if the stack is full */
-bool isFull(Stack* stack) {
+bool isFull(Stack *stack) 
+{
     return stack->top == (stack->size - 1);
 }
 
 /* Add item to the stack */
-void push(Stack* stack, char *currentData, char *previousData) 
+void push(Stack *stack, char *currentData, char *previousData) 
 { 
     if (isFull(stack)) return;
 
@@ -70,7 +75,7 @@ void push(Stack* stack, char *currentData, char *previousData)
 } 
 
 /* Remove item from stack */
-int pop(Stack* stack, char* currentData, char *previousData) 
+int pop(Stack *stack, char *currentData, char *previousData) 
 { 
     if (isEmpty(stack)) return INT32_MIN; 
     
@@ -83,15 +88,17 @@ int pop(Stack* stack, char* currentData, char *previousData)
 } 
 
 /* Check if a string is a number */
-bool isNumber(char *str) {
+bool isNumber(char *str) 
+{
     int i;
-    for(i = 0; str[i]; i++) 
-        if(!isdigit(str[i])) return false;
+    for (i = 0; str[i]; i++) 
+        if (!isdigit(str[i])) return false;
     
     return true;
 }
 
-char* getTextContent(FILE *f) {
+char* getTextContent(FILE *f) 
+{
      /* Get the number of bytes */
     fseek(f, 0L, SEEK_END);
     size_t numbytes = ftell(f);
@@ -100,10 +107,10 @@ char* getTextContent(FILE *f) {
     fseek(f, 0L, SEEK_SET);	
     
     /* Allocate sufficient memory for the buffer to hold the text */
-    char *text = (char*)calloc(numbytes, sizeof(char));	
+    char *text = (char*) calloc (numbytes, sizeof(char));	
 
     /* Memory error */
-    if(text == NULL)
+    if (text == NULL)
         return "NO";
     
     /* Copy all the text into the buffer */
@@ -117,8 +124,8 @@ int main() {
     size_t commandSize, responseSize;
     enum { POSITION_SIZE = 8, COMMAND_SIZE = 16, RESPONSE_SIZE = 32, MAX_TEXT_SIZE = 128, STACK_SIZE = 1024 };
 
-    Stack* stack_undo = init(STACK_SIZE);
-    Stack* stack_redo = init(STACK_SIZE);
+    Stack *stack_undo = init(STACK_SIZE);
+    Stack *stack_redo = init(STACK_SIZE);
 
     char *command = (char *) malloc (COMMAND_SIZE);
     char *response = (char *) malloc (RESPONSE_SIZE); 
@@ -131,7 +138,8 @@ int main() {
 
     FILE *file;
 
-    while(true) {
+    while (true) 
+    {
         printf("Command me: ");
 
         getline(&command, &commandSize, stdin);
@@ -139,13 +147,15 @@ int main() {
         command[strcspn(command, "\n")] = 0;
 
         /* ----------------------------------- QUIT COMMAND -------------------------------------- */
-        if(strcmp(command, "quit") == 0) {
+        if (strcmp(command, "quit") == 0) 
+        {
             printf("Bye, bye! \n");
             printf("\n---------------------------------------\n\n");
             break;
         }
         /* ----------------------------------- OPEN COMMAND -------------------------------------- */
-        else if(strcmp(command, "open") == 0) {
+        else if (strcmp(command, "open") == 0) 
+        {
             printf("Enter the filename:\n");
             getline(&response, &responseSize, stdin);
 
@@ -156,17 +166,21 @@ int main() {
             file = fopen(response, "r+");
 
             /* Quit if the file does not exist */
-            if(file == NULL){
+            if (file == NULL)
+            {
                 printf("%s\n", "The file does not exist. Try another command.");
                 printf("\n---------------------------------------\n\n");
-            } else {
+            } 
+            else 
+            {
                 printf("%s\n", "File opened. Ready for edit.");
                 printf("\n---------------------------------------\n\n");
                 access = true;
             }
         }
         /* ----------------------------------- SAVE COMMAND -------------------------------------- */
-        else if(strcmp(command, "save") == 0) {
+        else if (strcmp(command, "save") == 0) 
+        {
             fclose(file);
             printf("%s\n", "File saved. Choose another file to edit.");
             printf("\n---------------------------------------\n\n");
@@ -175,26 +189,35 @@ int main() {
             strcpy(currentFile, "");
         }
         /* ----------------------------------- PRINT COMMAND -------------------------------------- */
-        else if(strcmp(command, "print") == 0) {
-            if(access) {
+        else if (strcmp(command, "print") == 0) 
+        {
+            if (access) 
+            {
                 printf("%s\n", "The content of the file is:");
 
                 char *res = getTextContent(file);
-                if(strcmp(res, "NO") == 0) {
+                if (strcmp(res, "NO") == 0) 
+                {
                     printf("Something went wrong..\n");
-                } else {
+                } 
+                else 
+                {
                     printf("%s\n", res);
                 }
 
                 printf("\n---------------------------------------\n\n");
-            } else {
+            } 
+            else 
+            {
                 printf("No file opened. Open a file to have access to this command.\n");
                 printf("\n---------------------------------------\n\n");
             }
         } 
         /* ----------------------------------- WRITE COMMAND -------------------------------------- */
-        else if(strcmp(command, "write") == 0) {
-           if(access) {
+        else if (strcmp(command, "write") == 0) 
+        {
+           if (access) 
+           {
                 printf("Write the text you want to insert:\n");
 
                 getline(&response, &responseSize, stdin);
@@ -206,13 +229,15 @@ int main() {
                 char *position = (char *) malloc (POSITION_SIZE);
                 size_t positionSize;
 
-                while(true) {
+                while (true) 
+                {
                     getline(&position, &positionSize, stdin);
 
                     position[strcspn(position, "\n")] = 0;
 
-                    if(isNumber(position)) break;
-                    else {
+                    if (isNumber(position)) break;
+                    else 
+                    {
                         printf("Invalid response. Only numbers accepted. Try again.\n");
                         printf("Write the position that you want to start with: \n");
                     }
@@ -223,24 +248,30 @@ int main() {
                 /* Allocate sufficient memory for the buffer to hold the text */
                 char *prevText = getTextContent(file);
 
-                if(strcmp(prevText, "NO") == 0) {
+                if (strcmp(prevText, "NO") == 0) 
+                {
                     printf("Something went wrong..\n");
                 } 
-                else {
-                    // Set the stream pointer "pos" bytes from the start.
+                else 
+                {
+                    /* Set the stream pointer "pos" bytes from the start. */
                     fseek(file, pos, SEEK_SET); 
 
-                    // Insert response into the file
+                    /* Insert response into the file */
                     fputs(response, file);
 
                     /* Allocate sufficient memory for the buffer to hold the text */
                     char *currText = getTextContent(file);
 
-                    if(strcmp(currText, "NO") == 0) {
+                    if (strcmp(currText, "NO") == 0) 
+                    {
                         printf("Something went wrong..\n");
-                    } else {
+                    } 
+                    else 
+                    {
                         /* Add action to stack */
-                        if(!isFull(stack_undo)) push(stack_undo, currText, prevText);
+                        if (!isFull(stack_undo)) 
+                            push(stack_undo, currText, prevText);
                         
                         free(currText);
                         free(prevText);
@@ -251,14 +282,18 @@ int main() {
                     }
                 }
 
-            } else {
+            } 
+            else 
+            {
                 printf("No file opened. Open a file to have access to this command.\n");
                 printf("\n---------------------------------------\n\n");
             }
         } 
         /* ----------------------------------- DELETE COMMAND -------------------------------------- */
-        else if(strcmp(command, "delete") == 0) { 
-            if(access) {
+        else if (strcmp(command, "delete") == 0) 
+        { 
+            if (access) 
+            {
                 printf("Write the start position from where you want to delete:\n");
 
                 size_t positionStartSize, positionFinishSize;
@@ -268,13 +303,15 @@ int main() {
                 char *positionFinish = (char *) malloc (POSITION_SIZE);
 
                 /* Read data until you get a number */
-                while(true) {
+                while (true) 
+                {
                     getline(&positionStart, &positionStartSize, stdin);
 
                     positionStart[strcspn(positionStart, "\n")] = 0;
 
-                    if(isNumber(positionStart)) break;
-                    else {
+                    if (isNumber(positionStart)) break;
+                    else 
+                    {
                         printf("Invalid response. Only numbers accepted. Try again.\n");
                         printf("Write the position that you want to start with: \n");
                     }
@@ -283,13 +320,15 @@ int main() {
                 printf("Write the finish position:\n");
 
                 /* Read data until you get a number */
-                while(true) {
+                while (true) 
+                {
                     getline(&positionFinish, &positionFinishSize, stdin);
 
                     positionFinish[strcspn(positionFinish, "\n")] = 0;
 
-                    if(isNumber(positionFinish)) break;
-                    else {
+                    if (isNumber(positionFinish)) break;
+                    else 
+                    {
                         printf("Invalid response. Only numbers accepted. Try again.\n");
                         printf("Write the position that you want to start with: \n");
                     }
@@ -302,23 +341,31 @@ int main() {
                 /* Allocate sufficient memory for the buffer to hold the text */
                 char *prevText = getTextContent(file);
 
-                if(strcmp(prevText, "NO") == 0) {
+                if (strcmp(prevText, "NO") == 0) 
+                {
                     printf("Something went wrong..\n");
-                } else {
+                } 
+                else 
+                {
                     fclose(file);
 
                     /* Open it for writing */
                     file = fopen(currentFile, "w");
 
-                    // Return if could not open file 
-                    if(file == NULL){
+                    /* Return if could not open file */ 
+                    if (file == NULL)
+                    {
                         printf("%s\n", "The file does not exist. Try another command.");
                         printf("\n---------------------------------------\n\n");
-                    } else {
+                    } 
+                    else 
+                    {
                         int i, k = 0;
                         char currText[256] = "";
-                        for (i = 0; prevText[i] != '\0'; i++) {
-                            if(i < posStart || i > posFinish) {
+                        for (i = 0; prevText[i] != '\0'; i++) 
+                        {
+                            if (i < posStart || i > posFinish) 
+                            {
                                 fputc(prevText[i], file); 
                                 currText[k++] = prevText[i];
                             }
@@ -327,7 +374,8 @@ int main() {
                         currText[k] = '\0';
 
                         /* Add it to the stack */
-                        if(!isFull(stack_undo)) push(stack_undo, currText, prevText);
+                        if (!isFull(stack_undo)) 
+                            push(stack_undo, currText, prevText);
 
                         fclose(file);
 
@@ -341,33 +389,39 @@ int main() {
                     }
                 }
             }
-            else {
+            else 
+            {
                 printf("No file opened. Open a file to have access to this command.\n");
                 printf("\n---------------------------------------\n\n");
             }
         } 
         /* ----------------------------------- UNDO COMMAND -------------------------------------- */
-        else if(strcmp(command, "undo") == 0) {
-            if(access) {
-                if(!isEmpty(stack_undo)) { 
+        else if (strcmp(command, "undo") == 0)
+        {
+            if (access)
+            {
+                if (!isEmpty(stack_undo)) 
+                { 
                     char *currData = (char *) malloc (MAX_TEXT_SIZE);
                     char *prevData = (char *) malloc (MAX_TEXT_SIZE);
 
                     /* Remove action from undo's stack and add it to redo's stack */
-                    if(pop(stack_undo, currData, prevData)) {
+                    if (pop(stack_undo, currData, prevData)) 
+                    {
                         push(stack_redo, prevData, currData);
                     }
 
-                    /* Undo the text from the file too */
                     /* Open it for writing */
                     file = fopen(currentFile, "w");
 
-                    // Return if could not open file 
-                    if(file == NULL){
+                    /* Return if could not open file */
+                    if (file == NULL) 
+                    {
                         printf("No file opened. Open a file to have access to this command.\n");
                         printf("\n---------------------------------------\n\n");
                     }
-                    else {
+                    else 
+                    {
                         fseek(file, 0L, SEEK_SET);	
                         fputs(prevData, file);
                         fclose(file);
@@ -379,38 +433,47 @@ int main() {
                         printf("The undo command has been succesfully executed.\n");
                         printf("\n---------------------------------------\n\n");
                     }
-                } else {
+                } 
+                else 
+                {
                     printf("Execute some commands. No undos available.\n");
                     printf("\n---------------------------------------\n\n");
                 }
-            } else {
+            } 
+            else 
+            {
                 printf("No file opened. Open a file to have access to this command.\n");
                 printf("\n---------------------------------------\n\n");
             }
         
         } 
         /* ----------------------------------- REDO COMMAND -------------------------------------- */
-        else if(strcmp(command, "redo") == 0) {
-            if(access) {
-                if(!isEmpty(stack_redo)) { 
+        else if (strcmp(command, "redo") == 0) 
+        {
+            if (access) 
+            {
+                if (!isEmpty(stack_redo)) 
+                { 
                     char *currData = (char *) malloc (MAX_TEXT_SIZE);
                     char *prevData = (char *) malloc (MAX_TEXT_SIZE);
 
                     /* Remove action from undo's stack and add it to redo's stack */
-                    if(pop(stack_redo, currData, prevData)) {
+                    if (pop(stack_redo, currData, prevData)) 
+                    {
                         push(stack_undo, prevData, currData);
                     }
 
-                    /* Undo the text from the file too */
                     /* Open it for writing */
                     file = fopen(currentFile, "w");
 
-                    // Return if could not open file 
-                    if(file == NULL){
+                    /* Return if could not open file */ 
+                    if (file == NULL) 
+                    {
                         printf("No file opened. Open a file to have access to this command.\n");
                         printf("\n---------------------------------------\n\n");
                     }
-                    else {
+                    else 
+                    {
                         fseek(file, 0L, SEEK_SET);	
                         fputs(prevData, file);
                         fclose(file);
@@ -422,11 +485,15 @@ int main() {
                         printf("The redo command has been succesfully executed.\n");
                         printf("\n---------------------------------------\n\n");
                     }
-                } else {
+                } 
+                else 
+                {
                     printf("Execute some commands. No redos available.\n");
                     printf("\n---------------------------------------\n\n");
                 }
-            } else {
+            } 
+            else 
+            {
                 printf("No file opened. Open a file to have access to this command.\n");
                 printf("\n---------------------------------------\n\n");
             }
