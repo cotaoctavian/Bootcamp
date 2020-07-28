@@ -11,7 +11,7 @@
 
 void handle_data (void (*progress_callback)(int, int), char *data, int data_size)
 {
-    if (data != NULL) 
+    if (NULL != data) 
     {
         int i = 0;
 
@@ -33,7 +33,7 @@ void handle_data (void (*progress_callback)(int, int), char *data, int data_size
 */
 void progress_bar (int index, int data_size)
 {   
-    if (data_size != 0) 
+    if (0 != data_size) 
     {
         float temp = 0.0f;
         int percent = 0;
@@ -61,11 +61,14 @@ int main()
 {
     char *buffer = (char *) malloc (19);
 
-    if (buffer != NULL) 
+    if (NULL != buffer) 
     {
         strcpy(buffer, "Testare321321321321"); 
         handle_data(progress_bar, buffer, strlen(buffer) - 1);
+        free(buffer);
+        buffer = NULL;
     }
+
 
     return 0;
 }
