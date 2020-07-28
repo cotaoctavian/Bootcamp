@@ -17,14 +17,14 @@ uint32_t get_value(char *buffer, int offset, int buffer_size, uint32_t *result)
 
     if (NULL == buffer) 
     {
-        printf("%s\n", "The buffer is null.");
+        printf("The buffer is null.");
         ret_val = -1;
     } 
     else 
     {
         if (offset > buffer_size - 4) 
         {
-            printf("%s\n", "Offset is greater than maximum limit.");
+            printf("Offset is greater than maximum limit.\n");
             ret_val = -2;
         } 
         else 
@@ -38,7 +38,6 @@ uint32_t get_value(char *buffer, int offset, int buffer_size, uint32_t *result)
 
 int main() 
 { 
-
     char buffer[] = {0x01, 0x11, 0x11, 0x00, 0x00, 0x00, 0x01}; 
     uint32_t result = 0;
     int response = get_value(buffer, 2, 7, &result);
@@ -49,7 +48,7 @@ int main()
     } 
     else 
     {
-        printf("%s\n", "Something went wrong while trying to convert the buffer to integer.");
+        printf("Something went wrong while trying to convert the buffer to integer.\n");
     }
 
     return 0; 
