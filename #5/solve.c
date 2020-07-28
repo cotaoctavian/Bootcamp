@@ -80,14 +80,10 @@ int deserialized_data(void *buffer, size_t buffer_size, COMPONENT_DATA *componen
 int main() 
 {	
 	int result = INT32_MIN;
+    	void *buffer = (void *) malloc (BUFFER_SIZE);
 
-	/* Allocating memory to buffer */
-    void *buffer = (void *) malloc (BUFFER_SIZE);
-
-	/* Check if the memory has been allocated */
 	if (NULL != buffer) 
 	{
-		/* Allocate memory to struct variable */
 		COMPONENT_DATA *data = (COMPONENT_DATA *) malloc (sizeof(COMPONENT_DATA));
 
 		data->attributes = 3;
