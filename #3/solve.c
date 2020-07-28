@@ -8,7 +8,6 @@
 *            - *data - is the string that is going to be parsed
 *            - data_size - is the size of the string
 */
-
 void handle_data (void (*progress_callback)(int, int), char *data, int data_size)
 {
     if (NULL != data) 
@@ -22,7 +21,7 @@ void handle_data (void (*progress_callback)(int, int), char *data, int data_size
     } 
     else 
     {
-        printf("%s\n", "The buffer is NULL.");
+        printf("The buffer is NULL.\n");
     }
 }
 
@@ -53,7 +52,7 @@ void progress_bar (int index, int data_size)
     } 
     else 
     { 
-        printf("%s\n", "Data size can't be zero.");
+        printf("Data size can't be zero.\n");
     }
 }
 
@@ -68,7 +67,9 @@ int main()
         free(buffer);
         buffer = NULL;
     }
-
+    else {
+        printf("The buffer is NULL.");
+    }
 
     return 0;
 }
