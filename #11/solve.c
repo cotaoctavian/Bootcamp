@@ -89,7 +89,6 @@ bool is_full(Queue *queue)
 */ 
 void push(Queue *queue, int value) 
 {
-
     if (NULL != queue) 
     {
         pthread_mutex_lock(&lock2);
@@ -287,7 +286,15 @@ void stop_engine()
 */
 void destroy_engine() 
 {
-    free(queue);
+    if (NULL != queue) 
+    { 
+        free(queue);
+        queue = NULL;
+    }
+    else 
+    {
+        printf("The queue is NULL.");
+    }
 }
 
 int main() 
@@ -299,10 +306,6 @@ int main()
     initializeEngine();
 
     if (NULL != queue) 
-    {
-
-    }
-    else 
     {
         for (i = 0; i < THREADS; i++) 
         {
@@ -318,6 +321,10 @@ int main()
 
         stop_engine();
         destroy_engine();
+    }
+    else 
+    {
+        printf("The queue is NULL.");
     }
     
     return 0;
