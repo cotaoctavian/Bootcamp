@@ -70,7 +70,7 @@ int main()
 	int result = INT32_MIN;
 
 	/* Allocating memory to buffer */
-    void *buffer = (void *) malloc (BUFFER_SIZE);
+    	void *buffer = (void *) malloc (BUFFER_SIZE);
 
 	/* Check if the memory has been allocated */
 	if (NULL != buffer) 
