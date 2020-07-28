@@ -4,7 +4,7 @@
 
 /* 
     CREATE DYNAMIC LIBRARY:
-        -> gcc -fPIC -shared -o sample.so sample.c
+        -> gcc -fPIC -shared -o sample.so solve.c
 
     COMPILE main.c: 
         -> gcc -o main main.c -ldl -rdynamic
@@ -25,13 +25,13 @@ int main()
 
     /* Get the handler */
     handler = dlopen("sample.so", RTLD_LAZY);
-    if (!handler)
+    if (handler == 0)
     {
         fprintf(stderr, "%s\n", dlerror());
         return 0;
     }
 
-     /* Clear any existing error */
+    /* Clear any existing error */
     dlerror();   
 
     /* Get the functions */ 
@@ -39,7 +39,8 @@ int main()
     *(void **) (&freeInLib) = dlsym(handler, "freeInLib");
 
     /* Check for errors */
-    if ((error = dlerror()) != NULL)  
+    error = dlerror();
+    if (NULL != error)  
     {
         fprintf(stderr, "%s\n", error);
         return 0;
