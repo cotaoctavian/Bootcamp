@@ -16,16 +16,16 @@ static bool run = true;
 */
 void *processing(void *args) 
 {
-    int *noOfThread = (int *) args;
+    int *no_of_thread = (int *) args;
 
-    printf("%s%d%s\n", "Thread #", *noOfThread, " is working.");
+    printf("%s%d%s\n", "Thread #", *no_of_thread, " is working.");
 
     while (run) 
     {
 
     }
 
-    printf("%s%d%s\n", "Thread #", *noOfThread, " stopped.");
+    printf("%s%d%s\n", "Thread #", *no_of_thread, " stopped.");
 
     return NULL;
 }
