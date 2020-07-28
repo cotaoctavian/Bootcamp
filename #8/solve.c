@@ -20,7 +20,7 @@ void *print_info(void *args)
 int main() 
 {
     pthread_t thread_id[THREAD_SIZE];
-    int i;
+    int i = 0;
     int v = 0;
     
     for (i = 0; i < THREAD_SIZE; i++) 
@@ -28,8 +28,7 @@ int main()
         pthread_create(&thread_id[i], NULL, print_info, &i);
     }
 
-    for(i = 0; i < THREAD_SIZE; i++) 
-    {
+    for(i = 0; i < THREAD_SIZE; i++) {
         pthread_join(thread_id[i], NULL);
     }
     
