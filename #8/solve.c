@@ -27,7 +27,8 @@ int main()
         pthread_create(&thread_id[i], NULL, print_info, &i);
     }
 
-    for(i = 0; i < THREAD_SIZE; i++) {
+    for(i = 0; i < THREAD_SIZE; i++) 
+    {
         pthread_join(thread_id[i], NULL);
     }
     
