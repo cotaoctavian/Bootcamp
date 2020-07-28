@@ -2,49 +2,70 @@
 #include <string.h>
 #include <stdlib.h>
 
-/* 
-    * @brief - The function must print each decimal value of each byte contained in char *data.
-    * @param[in] - void (*progress_callback) is used to call the function progress_callback
-    *            - char *data is the string that is going to be parsed
-    *            - int data_size is the size of the string
+/**
+* @brief     - The function must print each decimal value of each byte contained in char *data.
+* @param[in] - *progress_callback - is used to call the function progress_callback
+*            - *data - is the string that is going to be parsed
+*            - data_size - is the size of the string
 */
 
 void handle_data (void (*progress_callback)(int, int), char *data, int data_size)
 {
-    int i;
-    for (i = 0; data[i]; i++) 
+    if (data != NULL) 
     {
-        progress_callback(i, data_size);
+        int i = 0;
+
+        for (i = 0; data[i]; i++) 
+        {
+            progress_callback(i, data_size);
+        }
+    } 
+    else 
+    {
+        printf("%s\n", "The buffer is NULL.");
     }
 }
 
-/* 
-    * @brief - The function is used to print out the progress bar
-    * @param[in] - int index is the index of the string
-    *            - int data_size is the size of the string
-*/ 
-
+/** 
+* @brief     - The function is used to print out the progress bar
+* @param[in] - index - is the index of the string
+*            - data_size - is the size of the string
+*/
 void progress_bar (int index, int data_size)
 {   
-    float temp = ((float) index / (float) data_size);
-    int percent = temp * 100;
-    
-    int i;
-    printf("%s", "[");
-
-    for (i = 1; i <= 100; i++) 
+    if (data_size != 0) 
     {
-        printf("%s", i <= percent? "#" : " ");
-    }
+        float temp = 0.0f;
+        int percent = 0;
 
-    printf("%s %d %s\n", "]", percent, "%");
+        temp = ((float) index / (float) data_size);
+        percent = temp * 100;
+        
+        int i = 0;
+        printf("%s", "[");
+
+        for (i = 1; i <= 100; i++) 
+        {
+            printf("%s", i <= percent? "#" : " ");
+        }
+
+        printf("%s %d %s\n", "]", percent, "%");
+    } 
+    else 
+    { 
+        printf("%s\n", "Data size can't be zero.");
+    }
 }
 
 int main()
 {
-    char *buffer = "Testare321321321321";
+    char *buffer = (char *) malloc (19);
 
-    handle_data(progress_bar, buffer, strlen(buffer) - 1);
-    
+    if (buffer != NULL) 
+    {
+        strcpy(buffer, "Testare321321321321"); 
+        handle_data(progress_bar, buffer, strlen(buffer) - 1);
+    }
+
     return 0;
 }
