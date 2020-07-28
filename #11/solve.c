@@ -118,6 +118,7 @@ void push(Queue *queue, int value)
 int pop(Queue *queue) 
 {   
     int result = 0;
+    
     if (NULL != queue)
     {
         pthread_mutex_lock(&lock2);
