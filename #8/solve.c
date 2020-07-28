@@ -21,7 +21,6 @@ int main()
 {
     pthread_t thread_id[THREAD_SIZE];
     int i = 0;
-    int v = 0;
     
     for (i = 0; i < THREAD_SIZE; i++) 
     {
