@@ -37,7 +37,18 @@ struct Queue *initialize(unsigned capacity)
 */
 bool is_empty(struct Queue *queue)
 {
-    return queue->size == 0;
+    int ret_val = 0;
+
+    if (NULL != queue) 
+    {
+        ret_val = queue->size == 0; 
+    } 
+    else 
+    {
+        ret_val = -1;
+    }
+
+    return ret_val;
 }
 
 /** 
@@ -47,7 +58,18 @@ bool is_empty(struct Queue *queue)
 */
 bool is_full(struct Queue *queue) 
 {
-    return queue->size == queue->capacity;
+    int ret_val = 0;
+
+    if (NULL != queue)
+    {
+        ret_val = queue->size == queue->capacity;
+    }
+    else 
+    {
+        ret_val = -1;
+    }
+
+    return ret_val;
 }
 
 /**
@@ -57,15 +79,22 @@ bool is_full(struct Queue *queue)
 */ 
 void push(struct Queue *queue, uint32_t value) 
 {
-    /* Check if the size of the queue is lower than the capacity of it. */
-    if (is_full(queue)) 
+    if (NULL != queue)
     {
-        printf("The queue is full.");
-    }
+        /* Check if the size of the queue is lower than the capacity of it. */
+        if (0 != is_full(queue)) 
+        {
+            printf("The queue is full.");
+        }
+        else 
+        {
+            queue->array[queue->size] = value;
+            queue->size += 1;
+        }
+    } 
     else 
     {
-        queue->array[queue->size] = value;
-        queue->size += 1;
+        printf("The queue is NULL.");
     }
 }
 
@@ -78,49 +107,62 @@ int pop(struct Queue *queue)
 {
     int result = 0;
 
-    if (is_empty(queue)) 
+    if (NULL != queue) 
     {
-        printf("The queue is empty. Invalid operation.");
-        result = INT32_MIN;
-    } 
-    else
-    {
-        int el = 0; 
-        el = queue->array[queue->top];
-
-        int i = 0;
-
-        for (i = 0; i <= queue->size - 1; i++) 
+        if (0 != is_empty(queue)) 
         {
-            queue->array[i] = queue->array[i + 1];
+            printf("The queue is empty. Invalid operation.");
+            result = INT32_MIN;
+        } 
+        else
+        {
+            int element = 0; 
+            element = queue->array[queue->top];
+
+            int i = 0;
+
+            for (i = 0; i <= queue->size - 1; i++) 
+            {
+                queue->array[i] = queue->array[i + 1];
+            }
+
+            queue->size -= 1;
+            
+            result = element;
         }
-
-        queue->size -= 1;
-        
-        result = el;
     }
-
+    else 
+    {
+        result = INT32_MIN;
+    }
     return result;
 }
 
 /**
 * @brief     - Get the top element.
-* @param[in] - struct Queue *queue is the queue
+* @param[in] - struct Queue *queue is the queues
 * @return    - returns the top element or a negative value in case of an error
 */
 int front(struct Queue *queue) 
 {
     int result = 0;
 
-    if (is_empty(queue)) 
-    {   
+    if (NULL != queue)
+    {
+         if (0 != is_empty(queue)) 
+        {   
+            result = INT32_MIN;
+        }
+        else 
+        {
+            result = queue->array[queue->top];
+        }
+    }
+    else
+    {
         result = INT32_MIN;
     }
-    else 
-    {
-        result = queue->array[queue->top];
-    }
-
+    
     return result;
 }
 
@@ -129,16 +171,33 @@ int front(struct Queue *queue)
 * @param[in] - struct Queue *queue is the queue
 */
 void print_queue(struct Queue *queue)
-{
-    int i = 0;
-    printf("The queue values are: ");
-
-    for (i = 0; i <= queue->size - 1; i++) 
+{   
+    if (NULL != queue)
     {
-        printf("%d ", queue->array[i]);
-    }
+        int i = 0;
+        printf("The queue values are: ");
 
-    printf("\n");
+        for (i = 0; i <= queue->size - 1; i++) 
+        {
+            printf("%d ", queue->array[i]);
+        }
+
+        printf("\n");
+    }   
+    else 
+    {
+        printf("The queue is NULL.");
+    }
+}
+
+/**
+* @brief     - Deallocate the memory for the struct. 
+* @param[in] - struct Queue *queue is the queue.
+*/
+void deinitialize(struct Queue *queue) 
+{
+    free(queue);
+    queue = NULL;
 }
 
 
@@ -148,21 +207,30 @@ int main() {
     int result = 0;
     struct Queue *queue = initialize(CAPACITY);
 
-    push(queue, 6);
-    push(queue, 67);
-    push(queue, 21);
-    push(queue, 3);
+    if (NULL != queue) 
+    {
+        push(queue, 6);
+        push(queue, 67);
+        push(queue, 21);
+        push(queue, 3);
 
-    print_queue(queue);
-    top = front(queue);
-    printf("The front element is: %d\n", top);
+        print_queue(queue);
+        top = front(queue);
+        printf("The front element is: %d\n", top);
 
-    result = pop(queue);
-    printf("The removed item is: %d\n", result);
-    print_queue(queue);
+        result = pop(queue);
+        printf("The removed item is: %d\n", result);
+        print_queue(queue);
 
-    top = front(queue);
-    printf("The front element is: %d\n", front(queue));
+        top = front(queue);
+        printf("The front element is: %d\n", front(queue));
+
+        deinitialize(queue);
+    }
+    else 
+    {
+        printf("The queue is NULL.");
+    }
 
     return 0;
 }
