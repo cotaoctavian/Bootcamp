@@ -33,8 +33,14 @@ int serializeData(COMPONENT_DATA *component_info, void *buffer, size_t buffer_si
 	memcpy(buffer + buffer_next, &component_info->name, component_info->name_size);
 	buffer_next += component_info->name_size;
 
-	if (buffer_next < buffer_size) *result = 0;
-	else *result = -1;
+	if (buffer_next < buffer_size) 
+	{ 
+		*result = 0;
+	}
+	else 
+	{ 
+		*result = -1;
+	}
 
 	return buffer_next;
 }
@@ -59,8 +65,14 @@ int deserialized_data(void *buffer, size_t buffer_size, COMPONENT_DATA *componen
 	memcpy(&component_info->name, buffer + buffer_next, component_info->name_size);
 	buffer_next += component_info->name_size;
 
-	if (buffer_next <= buffer_size) *result = 0;
-	else *result = -1;
+	if (buffer_next <= buffer_size) 
+	{ 
+		*result = 0;
+	}
+	else 
+	{ 
+		*result = -1;
+	}
 
 	return buffer_next;
 } 
@@ -70,12 +82,11 @@ int main()
 	int result = INT32_MIN;
 
 	/* Allocating memory to buffer */
-    	void *buffer = (void *) malloc (BUFFER_SIZE);
+    void *buffer = (void *) malloc (BUFFER_SIZE);
 
 	/* Check if the memory has been allocated */
 	if (NULL != buffer) 
 	{
-	
 		/* Allocate memory to struct variable */
 		COMPONENT_DATA *data = (COMPONENT_DATA *) malloc (sizeof(COMPONENT_DATA));
 
