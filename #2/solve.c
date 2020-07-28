@@ -16,7 +16,7 @@ uint32_t get_value(char *buffer, int offset, int buffer_size, uint32_t *result)
     
     int red_flag = 0;
 
-    if (buffer == NULL) 
+    if (NULL == buffer) 
     {
         printf("%s\n", "The buffer is null.");
         red_flag = -1;
@@ -46,7 +46,7 @@ int main()
 
     int response = get_value(buffer, 2, 7, &result);
 
-    if (response == 0) 
+    if (0 == response) 
     {
         printf("%d\n", result);
     } 
