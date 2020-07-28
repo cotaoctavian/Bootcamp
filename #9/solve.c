@@ -6,10 +6,10 @@
 
 pthread_mutex_t lock;
 
-/* 
-    * @brief - This function prints out the value passed as a parameter and increment it, allowing only to one thread a time to acces the critical section
-    * @param[in] - void *args is the variable that is going to be printed passed as a parameter to thread's function
-    * @return - returns NULL 
+/** 
+* @brief     - This function prints out the value passed as a parameter and increment it, allowing only to one thread a time to acces the critical section
+* @param[in] - void *args - is the variable that is going to be printed passed as a parameter to thread's function
+* @return    - returns NULL 
 */
 void *print_info(void *args) 
 {
