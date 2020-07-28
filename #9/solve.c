@@ -38,7 +38,8 @@ int main()
 {
     pthread_t tid[THREAD_SIZE];
 
-    if (pthread_mutex_init(&lock, NULL) != 0) {
+    if (0 != pthread_mutex_init(&lock, NULL)) 
+    {
         printf("\n Something went wrong while initializing the mutex.\n");
         return 1;
     }
@@ -47,6 +48,7 @@ int main()
 
     int i;
     int v = 0;
+    
     for (i = 0; i < THREAD_SIZE; i++) 
     {
         pthread_create(&tid[i], NULL, print_info, &v);
