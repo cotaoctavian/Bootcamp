@@ -6,10 +6,19 @@
 * @return - returns the allocated variable.
 */
 int *alloc_in_lib() 
-{
+{   
+    int *ret_val = NULL;
     int *value = (int *) malloc(sizeof(int));
+    if (NULL != value) 
+    {
+        ret_val = value;
+    }
+    else 
+    {
+        ret_val = NULL;
+    }
 
-    return value; 
+    return ret_val;
 }
 
 /**
@@ -18,7 +27,15 @@ int *alloc_in_lib()
 */
 void free_in_lib(int *value) 
 {
-    printf("The value is: %d.\nMemory deallocated.\n", *value);
+    if (NULL != value)
+    {
+        printf("The value is: %d.\nMemory deallocated.\n", *value);
     
-    free(value);
+        free(value);
+        value = NULL;
+    }
+    else 
+    {
+        printf("The value is NULL. Deallocation failed.");
+    }
 }
