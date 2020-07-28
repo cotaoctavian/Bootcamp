@@ -678,7 +678,6 @@ int main() {
                 printf("This command doesn't exist. Try another one.\n");
             }
         }
-
     }
 
     return 0;
