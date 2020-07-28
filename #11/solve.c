@@ -117,11 +117,10 @@ void push(Queue *queue, int value)
 * @return        - returns the removed element or a negative value in case of an error
 */
 int pop(Queue *queue) 
-{
+{   
+    int result = 0;
     if (NULL != queue)
     {
-         int result = 0;
-
         pthread_mutex_lock(&lock2);
         
         if (0 != is_empty(queue)) 
@@ -135,13 +134,14 @@ int pop(Queue *queue)
         queue->size--;
 
         pthread_mutex_unlock(&lock2);
-
-        return result;
     }
     else 
     {
         printf("The queue is NULL.");
+        result = INT32_MIN;
     }
+    
+    return result;
 }
 
 /** 
@@ -197,7 +197,6 @@ int get_rear(Queue *queue)
         result = INT32_MIN;
     }
     
-
     return result;
 }
 
