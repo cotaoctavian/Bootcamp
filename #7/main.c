@@ -25,38 +25,42 @@ int main()
 
     /* Get the handler */
     handler = dlopen("sample.so", RTLD_LAZY);
+
     if (0 == handler)
     {
         fprintf(stderr, "%s\n", dlerror());
-        return 0;
     }
-
-    /* Clear any existing error */
-    dlerror();   
-
-    /* Get the functions */ 
-    *(void **) (&allocInLib) = dlsym(handler, "allocInLib");
-    *(void **) (&freeInLib) = dlsym(handler, "freeInLib");
-
-    /* Check for errors */
-    error = dlerror();
-    if (NULL != error)  
+    else 
     {
-        fprintf(stderr, "%s\n", error);
-        return 0;
+        /* Clear any existing error */
+        dlerror();   
+
+        /* Get the functions */ 
+        *(void **) (&allocInLib) = dlsym(handler, "allocInLib");
+        *(void **) (&freeInLib) = dlsym(handler, "freeInLib");
+
+        /* Check for errors */
+        error = dlerror();
+
+        if (NULL != error)  
+        {
+            fprintf(stderr, "%s\n", error);
+        }
+        else 
+        {
+            /* Get the allocated variable */
+            int *value = (*allocInLib)();
+
+            /* Set value to the pointer. */
+            *value = 5;
+
+            /* Deallocate the memory */
+            (*freeInLib)(value);
+
+            /* Close the handler */
+            dlclose(handler);
+        }
     }
-
-    /* Get the allocated variable */
-    int *value = (*allocInLib)();
-
-    /* Set value to the pointer. */
-    *value = 5;
-
-    /* Deallocate the memory */
-    (*freeInLib)(value);
-
-    /* Close the handler */
-    dlclose(handler);
-
+    
     return 0;
 }
