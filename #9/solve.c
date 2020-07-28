@@ -36,28 +36,30 @@ void *print_info(void *args)
 
 int main() 
 {
-    pthread_t tid[THREAD_SIZE];
-
-    if (pthread_mutex_init(&lock, NULL) != 0) {
-        printf("\n Something went wrong while initializing the mutex.\n");
-        return 1;
-    }
-
-    printf("------------------------------\n");
-
     int i = 0;
     int v = 0;
-    for (i = 0; i < THREAD_SIZE; i++) 
+    pthread_t tid[THREAD_SIZE];
+
+    if (0 != pthread_mutex_init(&lock, NULL)) 
     {
-        pthread_create(&tid[i], NULL, print_info, &v);
+        printf("\n Something went wrong while initializing the mutex.\n");
+    }
+    else 
+    {
+        printf("------------------------------\n");
+
+        for (i = 0; i < THREAD_SIZE; i++) 
+        {
+            pthread_create(&tid[i], NULL, print_info, &v);
+        }
+
+        for (i = 0; i < THREAD_SIZE; i++) 
+        {
+            pthread_join(tid[i], NULL);
+        }   
+
+        pthread_mutex_destroy(&lock);
     }
 
-    for (i = 0; i < THREAD_SIZE; i++) 
-    {
-        pthread_join(tid[i], NULL);
-    }   
-
-    pthread_mutex_destroy(&lock);
-    
     return 0;
 }
