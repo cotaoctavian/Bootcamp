@@ -1,10 +1,10 @@
 #include <stdio.h>
 
-/*    
-    * @brief This macro prints out information about the file, the line and the formatted text
-    * @param[in] - debug_level is an integer from 1 to 5
-    *            - f_ is the format of the text
-    *            - ... stores one or more parameters of everything you want to print out
+/**    
+* @brief     - This macro prints out information about the file, the line and the formatted text
+* @param[in] - debug_level is an integer from 1 to 5
+*            - f_ is the format of the text
+*            - ... stores one or more parameters of everything you want to print out
 */
 
 #define TM_PRINTF(debug_level, f_, ...) \
