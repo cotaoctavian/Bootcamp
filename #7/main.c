@@ -25,7 +25,7 @@ int main()
 
     /* Get the handler */
     handler = dlopen("sample.so", RTLD_LAZY);
-    if (handler == 0)
+    if (0 == handler)
     {
         fprintf(stderr, "%s\n", dlerror());
         return 0;
