@@ -6,11 +6,9 @@
 *            - f_ is the format of the text
 *            - ... stores one or more parameters of everything you want to print out
 */
-
 #define TM_PRINTF(debug_level, f_, ...) \
     printf("%d %s %d\n", debug_level, __FILE__, __LINE__); \
     printf((f_), __VA_ARGS__)
-    
     
 int main() 
 {
