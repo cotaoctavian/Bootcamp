@@ -1,155 +1,330 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdbool.h>
 #include <stdint.h>
+#include <pthread.h>
+#include <stdlib.h>
 
-#define MAP_SIZE 500
+#define QUEUE_SIZE 10
+#define THREADS 10
 
-uint32_t pos = 0;
-
-typedef struct _Map
+typedef struct _Queue 
 {
-    char *key;
-    int value;  
-} Map;
+    int top, rear;
+    unsigned int capacity;
+    unsigned int size;
+    int *arr;
+} Queue;
 
-/**
-* @brief     - Search for a key, if it's not found, then add it on the map, else increment the value of it.
-* @param[in] - Map map[] stores all the pairs of the type <key, value>
-*            - char *key is the key that we are looking for in the map
+/* Declarations */
+Queue *queue;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t lock2 = PTHREAD_MUTEX_INITIALIZER;
+pthread_t consumer;
+static int v = 0;
+
+/** 
+* @brief     - Initialize a new queue. 
+* @param[in] - unsigned capacity - the parameter that stores the capacity of the queue
+* @return    - returns the initialized queue
 */
-void add_key(Map map[], char *key) 
+Queue *init(unsigned capacity) 
 {
-    int i = 0;
-    int found = 0;
+    Queue *queue = (Queue *) malloc (sizeof(Queue));
 
-    for (i = 0; i < MAP_SIZE; i++) 
-    {
-        if (strcmp(map[i].key, key) == 0) 
-        {
-            found = 1;
-            map[i].value++;
-        }
-    }
+    queue->capacity = capacity;
+    queue->rear = capacity - 1; 
+    queue->size = 0;
+    queue->top = 0;
+    queue->arr = (int *) malloc (sizeof(int) * capacity);
 
-    if (0 == found) 
-    {
-        map[pos].key = key;
-        map[pos].value = 1;
-        pos++;
-    }
-}
-
-/**
-* @brief     - Sorts the items from the map based on the value of the keys.
-* @param[in] - Map map[] - is the map that is going to be sorted
-*/
-void sort_items_by_apparitions(Map map[])
-{
-    int i = 0;
-    int j = 0;
-
-    for (i = 0; i < pos - 1; i++) 
-    {
-        for (j = i + 1; j < pos; j++) 
-        {
-            if (map[i].value < map[j].value) 
-            {
-                Map temp = map[i];
-
-                map[i].key = map[j].key;
-                map[i].value = map[j].value;
-
-                map[j].key = temp.key;
-                map[j].value = temp.value;
-            } 
-        }
-    }
+    return queue;
 }
 
 /** 
-* @brief - This functions prints out all the pairs from the map
+* @brief     - Check if the queue is empty.
+* @param[in] - struct Queue *queue - is the queue
+* @return    - returns false/true
 */
-void print_items(Map map[])
+bool is_empty(Queue *queue)
 {
-    int i = 0;
+    int ret_val = 0;
 
-    for (i = 0; i < pos; i++)
+    if (NULL != queue) 
     {
-        printf("Apparitions: %d ---> Word: %s\n", map[i].value, map[i].key);
+        ret_val = queue->size == 0; 
+    } 
+    else 
+    {
+        ret_val = -1;
     }
+
+    return ret_val;
 }
 
-
-int main() 
+/** 
+* @brief     - Check if the queue is full.
+* @param[in] - struct Queue *queue - is the queue
+* @return    - returns false/true
+*/
+bool is_full(Queue *queue) 
 {
-    Map map[MAP_SIZE];
-    FILE *infile;
-    char *buffer;
-    long numbytes;
-    int i = 0;
+    int ret_val = 0;
 
-    /* Initialize map with default values. */
-    for(i = 0; i < MAP_SIZE; i++) 
+    if (NULL != queue)
     {
-        map[i].key = "";
-        map[i].value = 0;
+        ret_val = queue->size == queue->capacity;
+    }
+    else 
+    {
+        ret_val = -1;
     }
 
-    /* Open an existing file for reading */
-    infile = fopen("#12/test.txt", "r");
-    
-    /* Quit if the file does not exist */
-    if (NULL != infile) 
+    return ret_val;
+}
+
+/** 
+* @brief         - Add an element to queue.
+* @param[in]     - uint32_t value - is the item that is going to be added into the queue
+* @param[in/out] - struct Queue *queue is the modified queue
+*/ 
+void push(Queue *queue, int value) 
+{
+    if (NULL != queue) 
     {
-        /* Get the number of bytes */
-        fseek(infile, 0L, SEEK_END);
-        numbytes = ftell(infile);
-        
-        /* Reset the file position indicator to the beginning of the file */
-        fseek(infile, 0L, SEEK_SET);	
-        
-        /* Allocate sufficient memory for the buffer to hold the text */
-        buffer = (char *)calloc(numbytes, sizeof(char));	
-        
-        /* Memory error */
-        if (NULL != buffer)
+        pthread_mutex_lock(&lock2);
+
+        if (0 == is_full(queue)) 
         {
-            /* Copy all the text into the buffer */
-            fread(buffer, sizeof(char), numbytes, infile);
-            fclose(infile);
+            queue->rear = (queue->rear + 1) % queue->capacity;
 
-            printf("%s\n", buffer);
-            
-            /* Separators */
-            const char s[] = "-,.?!;: ";
-            char *token;
-            
-            token = strtok(buffer, s);
-            
-            /* Parsing through the string to get all the distinct words and count their apparitions */
-            while (NULL != token) 
-            {
-                //printf("%s\n", token);
-                add_key(map, token);
-                token = strtok(NULL, s);
-            }
+            queue->arr[queue->rear] = value;
 
-            sort_items_by_apparitions(map);
-            print_items(map);
-
-            /* Free the memory we used for the buffer */
-            free(buffer);
-            buffer = NULL;
+            queue->size++; 
         }
+
+        pthread_mutex_unlock(&lock2);
+    }
+    else 
+    {
+        printf("The queue is NULL.");
+    }
+} 
+
+/** 
+* @brief         - Remove top element from queue and return it.
+* @param[in/out] - struct Queue *queue - is the modified queue
+* @return        - returns the removed element or a negative value in case of an error
+*/
+int pop(Queue *queue) 
+{   
+    int result = 0;
+    if (NULL != queue)
+    {
+        pthread_mutex_lock(&lock2);
+        
+        if (0 != is_empty(queue)) 
+        {
+            result = INT32_MIN;
+        }
+
+        result = queue->arr[queue->top];
+
+        queue->top = (queue->top + 1) % queue->capacity; 
+        queue->size--;
+
+        pthread_mutex_unlock(&lock2);
+    }
+    else 
+    {
+        printf("The queue is NULL.");
+        result = INT32_MIN;
+    }
+    
+    return result;
+}
+
+/** 
+* @brief     - Get the top element.
+* @param[in] - struct Queue *queue - is the queue
+* @return    - returns the top element or a negative value in case of an error
+*/
+int front(Queue *queue) 
+{       
+    int result = 0;
+    
+    if (NULL != queue)
+    {
+        if (0 != is_empty(queue)) 
+        {
+            result = INT32_MIN;
+        }  
         else 
         {
-            printf("The buffer is NULL.");
+            result = queue->arr[queue->top];
         }
     }
     else 
     {
-        printf("The infile is NULL.");
+        result = INT32_MIN;
+    }
+
+    return result;
+}
+
+/** 
+* @brief     - Get the rear element.
+* @param[in] - struct Queue *queue - is the queue
+* @return    - returns the rear element or a negative value in case of an error
+*/
+int get_rear(Queue *queue) 
+{   
+    int result = 0;
+
+    if (NULL != queue)
+    {
+        if(0 != is_empty(queue)) 
+        {
+            result = INT32_MIN;
+        }
+        else 
+        { 
+            result = queue->arr[queue->rear];
+        }
+    }
+    else
+    {
+        result = INT32_MIN;
+    }
+    
+    return result;
+}
+
+/** 
+* @brief - This function allocates memory to the queue
+*/
+void initializeEngine() 
+{
+    queue = init(QUEUE_SIZE);
+}
+
+/**
+* @brief     - Deallocate the memory for the struct. 
+* @param[in] - Queue *queue is the queue.
+*/
+void deinitialize(Queue *queue) 
+{
+    if(NULL != queue) 
+    {   
+        free(queue);
+        queue = NULL;
+    }
+    else 
+    {
+        printf("The queue is NULL.");
+    }
+}
+
+/** 
+* @brief     - This function is used by producer threads to print their id and the value passed as an argument, also incrementing it and push it to the queue.
+* @param[in] - void *args is the value passed to the function to increment it
+* @return    - return NULL
+*/
+void *produce(void *args) 
+{
+    int *value = (int *) args;
+
+    pthread_mutex_lock(&lock);
+
+    printf("Thread id: %lu - value: %d\n", pthread_self(), *value);
+
+    push(queue, *value);
+
+    (*value)++;
+
+    pthread_mutex_unlock(&lock);
+
+    return NULL;
+}
+
+/** 
+* @brief     - This function is used by consumer thread to print the values from the queue and clear it.
+* @param[in] - void *args - is empty
+* @return    - return NULL
+*/
+void *on_consume(void *args) 
+{
+    pthread_mutex_lock(&lock);
+
+    while (0 == is_empty(queue)) 
+    {
+        printf("Consumer popped from queue value: %d\n", pop(queue));
+    }
+
+    pthread_mutex_unlock(&lock);
+
+    return NULL;
+}
+
+/** 
+* @brief - This function starts the consumer thread.
+*/
+void start_engine() 
+{
+    pthread_create(&consumer, NULL, on_consume, NULL);
+}
+
+/** 
+* @brief - This function stops the consumer thread.
+*/
+void stop_engine() 
+{
+    pthread_join(consumer, NULL);
+}
+
+/**
+* @brief - This function deallocate the memory of the queue
+*/
+void destroy_engine() 
+{
+    if (NULL != queue) 
+    { 
+        free(queue);
+        queue = NULL;
+    }
+    else 
+    {
+        printf("The queue is NULL.");
+    }
+}
+
+int main() 
+{
+    int i = 0;
+
+    pthread_t producers[THREADS];
+
+    initializeEngine();
+
+    if (NULL != queue) 
+    {
+        for (i = 0; i < THREADS; i++) 
+        {
+            pthread_create(&producers[i], NULL, produce, &v);
+        }
+        
+        for (i = 0; i < THREADS; i++)
+        {
+            pthread_join(producers[i], NULL);
+        }
+
+        start_engine();
+
+        stop_engine();
+        destroy_engine();
+    }
+    else 
+    {
+        printf("The queue is NULL.");
     }
     
     return 0;
