@@ -9,10 +9,10 @@
 
 static bool run = true;
 
-/*
-    * @brief - This function prints out the value passed as a parameter
-    * @param[in] - void *args is the variable that is going to be printed passed as a parameter to thread's function
-    * @return - returns NULL 
+/**
+* @brief     - This function prints out the value passed as a parameter
+* @param[in] - void *args - is the variable that is going to be printed passed as a parameter to thread's function
+* @return    - returns NULL 
 */
 void *processing(void *args) 
 {
@@ -31,11 +31,12 @@ void *processing(void *args)
     return NULL;
 }
 
-int main() {
+int main() 
+{
     pthread_t tid[THREAD_SIZE];
     int v[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int i = 0;
 
-    int i;
     for (i = 0; i < THREAD_SIZE; i++) 
     {
         pthread_create(&tid[i], NULL, processing, &v[i]); 
