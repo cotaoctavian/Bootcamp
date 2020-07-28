@@ -8,7 +8,6 @@
 
 void print_bits(uint32_t value)
 {
-
     unsigned int bit = 1u << 31;
 
     while (0 != bit) 
