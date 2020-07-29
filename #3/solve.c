@@ -59,7 +59,7 @@ void progress_bar (int index, int data_size)
 
 int main()
 {
-    char buffer[256];
+    char buffer[256] = {0};
 
     scanf("%s", buffer);
 
@@ -67,7 +67,8 @@ int main()
     {
         handle_data(progress_bar, buffer, strlen(buffer) - 1);
     }
-    else {
+    else 
+    {
         printf("The buffer is NULL.");
     }
 
