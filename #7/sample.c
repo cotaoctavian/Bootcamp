@@ -9,6 +9,7 @@ int *alloc_in_lib()
 {   
     int *ret_val = NULL;
     int *value = (int *) malloc(sizeof(int));
+    
     if (NULL != value) 
     {
         ret_val = value;
