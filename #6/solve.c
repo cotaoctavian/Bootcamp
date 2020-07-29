@@ -18,13 +18,13 @@ struct Queue
 * @param[in] - unsigned capacity - the parameter that stores the capacity of the queue
 * @return    - returns the initialized queue
 */
-struct Queue *initialize(unsigned capacity) 
+struct Queue *initialize(unsigned int capacity) 
 {
     struct Queue *queue = (struct Queue *) malloc (sizeof(struct Queue));
     
     queue->capacity = capacity;
     queue->size = 0;
-    queue->array = (int *)malloc(capacity * sizeof(int));
+    queue->array = (int *) malloc (capacity * sizeof(int));
     queue->top = 0;
 
     return queue;
@@ -196,8 +196,21 @@ void print_queue(struct Queue *queue)
 */
 void deinitialize(struct Queue *queue) 
 {
-    free(queue);
-    queue = NULL;
+    if (NULL != queue) 
+    {   
+        free(queue);
+        queue = NULL;
+
+        if (NULL != queue->array) 
+        {
+            free(queue->array);
+            queue->array = NULL;
+        }
+    }
+    else 
+    {
+        printf("The queue is NULL.");
+    }
 }
 
 
