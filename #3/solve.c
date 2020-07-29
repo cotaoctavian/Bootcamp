@@ -8,6 +8,7 @@
 *            - *data - is the string that is going to be parsed
 *            - data_size - is the size of the string
 */
+
 void handle_data (void (*progress_callback)(int, int), char *data, int data_size)
 {
     if (NULL != data) 
@@ -58,14 +59,13 @@ void progress_bar (int index, int data_size)
 
 int main()
 {
-    char *buffer = (char *) malloc (19);
+    char buffer[256];
 
-    if (NULL != buffer) 
+    scanf("%s", buffer);
+
+    if (NULL != buffer || strlen(buffer) == 0) 
     {
-        strcpy(buffer, "Testare321321321321"); 
         handle_data(progress_bar, buffer, strlen(buffer) - 1);
-        free(buffer);
-        buffer = NULL;
     }
     else {
         printf("The buffer is NULL.");
