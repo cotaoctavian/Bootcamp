@@ -24,6 +24,7 @@ typedef struct _COMPONENT_DATA
 int serializeData(COMPONENT_DATA *component_info, void *buffer, size_t buffer_size, int *result) 
 {
 	int buffer_next = 0;
+	
 	if (NULL == component_info) 
 	{
 		printf("The struct is NULL.");
@@ -69,6 +70,7 @@ int serializeData(COMPONENT_DATA *component_info, void *buffer, size_t buffer_si
 int deserialized_data(void *buffer, size_t buffer_size, COMPONENT_DATA *component_info, int *result)
 {	
 	int buffer_next = 0;
+	
 	if (NULL == component_info)
 	{
 		printf("The struct is NULL.");
@@ -106,7 +108,7 @@ int deserialized_data(void *buffer, size_t buffer_size, COMPONENT_DATA *componen
 int main() 
 {	
 	int result = INT32_MIN;
-    void *buffer = (void *) malloc (BUFFER_SIZE);
+    	void *buffer = (void *) malloc (BUFFER_SIZE);
 
 	if (NULL != buffer) 
 	{
