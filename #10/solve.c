@@ -7,20 +7,50 @@
 
 #define THREAD_SIZE 10
 
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static bool run = true;
 
+void set_run(bool value);
+bool get_run(); 
+
 /**
-* @brief     - This function prints out the value passed as a parameter
-* @param[in] - void *args - is the variable that is going to be printed passed as a parameter to thread's function
-* @return    - returns NULL 
-*/
+ * @brief     - This function sets the value of the run variable.
+ * @param[in] - value - is the variable that sets the value for run variable.
+ */
+void set_run(bool value) 
+{
+    pthread_mutex_lock(&lock);
+    run = value;
+    pthread_mutex_unlock(&lock);
+}
+
+/**
+ * @brief  - This function gets the value of the run variable.
+ * @return - true is the threads are running, false otherwise. 
+ */
+bool get_run() 
+{
+    bool local_run = false;
+
+    pthread_mutex_lock(&lock);
+    local_run = run;
+    pthread_mutex_unlock(&lock);
+
+    return local_run;
+}
+
+/**
+ * @brief     - This function prints out the value passed as a parameter
+ * @param[in] - void *args - is the variable that is going to be printed passed as a parameter to thread's function
+ * @return    - returns NULL 
+ */
 void *processing(void *args) 
 {
     int *no_of_thread = (int *) args;
 
     printf("%s%d%s\n", "Thread #", *no_of_thread, " is working.");
 
-    while (run) 
+    while (get_run()) 
     {
 
     }
@@ -43,7 +73,7 @@ int main()
 
     sleep(5);
 
-    run = false;
+    set_run(false);
 
     for (i = 0; i < THREAD_SIZE; i++) 
     {
