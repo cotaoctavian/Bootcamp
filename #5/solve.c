@@ -24,22 +24,35 @@ typedef struct _COMPONENT_DATA
 int serializeData(COMPONENT_DATA *component_info, void *buffer, size_t buffer_size, int *result) 
 {
 	int buffer_next = 0;
-	memcpy(buffer + buffer_next, &component_info->attributes, sizeof(int));
-	buffer_next += sizeof(int);
-
-	memcpy(buffer + buffer_next, &component_info->name_size, sizeof(component_info->name_size));
-	buffer_next += sizeof(component_info->name_size);
-
-	memcpy(buffer + buffer_next, &component_info->name, component_info->name_size);
-	buffer_next += component_info->name_size;
-
-	if (buffer_next < buffer_size) 
-	{ 
-		*result = 0;
+	if (NULL == component_info) 
+	{
+		printf("The struct is NULL.");
+		*result = -2;
+	} 
+	else if (NULL == buffer) 
+	{
+		printf("The buffer is NULL.");
+		*result = -3;
 	}
-	else 
-	{ 
-		*result = -1;
+	else
+	{
+		memcpy(buffer + buffer_next, &component_info->attributes, sizeof(int));
+		buffer_next += sizeof(int);
+
+		memcpy(buffer + buffer_next, &component_info->name_size, sizeof(component_info->name_size));
+		buffer_next += sizeof(component_info->name_size);
+
+		memcpy(buffer + buffer_next, &component_info->name, component_info->name_size);
+		buffer_next += component_info->name_size;
+
+		if (buffer_next <= buffer_size) 
+		{ 
+			*result = 0;
+		}
+		else 
+		{ 
+			*result = -1;
+		}
 	}
 
 	return buffer_next;
@@ -54,24 +67,37 @@ int serializeData(COMPONENT_DATA *component_info, void *buffer, size_t buffer_si
 * @return 		 - returns the size of the deserialized data
 */
 int deserialized_data(void *buffer, size_t buffer_size, COMPONENT_DATA *component_info, int *result)
-{
+{	
 	int buffer_next = 0;
-	memcpy(&component_info->attributes, buffer, sizeof(int));
-	buffer_next += sizeof(int);
-	
-	memcpy(&component_info->name_size, buffer + buffer_next, sizeof(component_info->name_size));
-	buffer_next += sizeof(component_info->name_size);
-
-	memcpy(&component_info->name, buffer + buffer_next, component_info->name_size);
-	buffer_next += component_info->name_size;
-
-	if (buffer_next <= buffer_size) 
-	{ 
-		*result = 0;
+	if (NULL == component_info)
+	{
+		printf("The struct is NULL.");
+		*result = -2;
+	}
+	else if (NULL == buffer)
+	{
+		printf("The buffer is NULL.");
+		*result = -3;
 	}
 	else 
-	{ 
-		*result = -1;
+	{
+		memcpy(&component_info->attributes, buffer, sizeof(int));
+		buffer_next += sizeof(int);
+		
+		memcpy(&component_info->name_size, buffer + buffer_next, sizeof(component_info->name_size));
+		buffer_next += sizeof(component_info->name_size);
+
+		memcpy(&component_info->name, buffer + buffer_next, component_info->name_size);
+		buffer_next += component_info->name_size;
+
+		if (buffer_next <= buffer_size) 
+		{ 
+			*result = 0;
+		}
+		else 
+		{ 
+			*result = -1;
+		}
 	}
 
 	return buffer_next;
@@ -80,7 +106,7 @@ int deserialized_data(void *buffer, size_t buffer_size, COMPONENT_DATA *componen
 int main() 
 {	
 	int result = INT32_MIN;
-    	void *buffer = (void *) malloc (BUFFER_SIZE);
+    void *buffer = (void *) malloc (BUFFER_SIZE);
 
 	if (NULL != buffer) 
 	{
@@ -121,12 +147,12 @@ int main()
 			} 
 			else 
 			{
-				printf("Something went wrong while deserializing the data...");
+				printf("Something went wrong while deserializing the data...\n");
 			}
 		}
 		else 
 		{
-			printf("Something went wrong while serializing the data...");
+			printf("Something went wrong while serializing the data...\n");
 		}
 
 		free(buffer);
