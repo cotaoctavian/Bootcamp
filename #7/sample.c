@@ -9,7 +9,7 @@
  *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-int *alloc_in_lib();
+int *alloc_in_lib(void);
 void free_in_lib(int *value);
 
 /**************************************************************
@@ -20,7 +20,7 @@ void free_in_lib(int *value);
 * @brief  This function allocates memory to an integer
 * @return returns the allocated variable.
 */
-int *alloc_in_lib() 
+int *alloc_in_lib(void) 
 {   
     int *ret_val = NULL;
     int *value = (int *) malloc(sizeof(int));
