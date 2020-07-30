@@ -11,7 +11,7 @@
  *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-uint32_t get_value(char *buffer, int offset, int buffer_size, uint32_t *result);
+static uint32_t get_value(char *buffer, int offset, int buffer_size, uint32_t *result);
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
@@ -25,7 +25,7 @@ uint32_t get_value(char *buffer, int offset, int buffer_size, uint32_t *result);
  * @param[in/out] result      - is the converted integer from the buffer's bytes.
  * @return        returns the a number if exists in string, else is going to return an error based on a specific case
 */
-uint32_t get_value(char *buffer, int offset, int buffer_size, uint32_t *result) 
+static uint32_t get_value(char *buffer, int offset, int buffer_size, uint32_t *result) 
 {   
     int ret_val = 0;
 
