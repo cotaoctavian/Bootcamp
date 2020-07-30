@@ -135,14 +135,14 @@ int main()
 		data.attributes = 3;
 		data.name = strdup("testare1321321321");
 		data.name_size = strlen(data.name);
-		
+
 		/* Serialize data */
 		int buffer_size = serializeData(&data, buffer, BUFFER_SIZE, &result);
 
 		/* Check if everything went fine */
 		if (0 == result)
 		{
-			/* Allocate memory to struct variable */
+		/* Allocate memory to struct variable */
 			COMPONENT_DATA copy = {0, "", 0};
 
 			/* Deserialize data */
