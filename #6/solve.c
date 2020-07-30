@@ -26,11 +26,11 @@ struct Queue
  **************************************************************/
 
 static struct Queue *initialize(unsigned int capacity);
-static bool is_empty(struct Queue *queue);
-static bool is_full(struct Queue *queue);
-static void push(struct Queue *queue, uint32_t value);
+static int is_empty(struct Queue *queue);
+static int is_full(struct Queue *queue);
 static int pop(struct Queue *queue);
 static int front(struct Queue *queue);
+static void push(struct Queue *queue, uint32_t value);
 static void print_queue(struct Queue *queue);
 static void deinitialize(struct Queue *queue);
 
@@ -60,13 +60,13 @@ static struct Queue *initialize(unsigned int capacity)
 * @param[in] queue - is the queue
 * @return    returns false/true
 */
-static bool is_empty(struct Queue *queue)
+static int is_empty(struct Queue *queue)
 {
     int ret_val = 0;
 
     if (NULL != queue) 
     {
-        ret_val = queue->size == 0; 
+        ret_val = queue->size == 0 ? 1 : 0; 
     } 
     else 
     {
@@ -81,13 +81,13 @@ static bool is_empty(struct Queue *queue)
 * @param[in] queue - is the queue
 * @return    returns false/true
 */
-static bool is_full(struct Queue *queue) 
+static int is_full(struct Queue *queue) 
 {
     int ret_val = 0;
 
     if (NULL != queue)
     {
-        ret_val = queue->size == queue->capacity;
+        ret_val = queue->size == queue->capacity ? 1 : 0;
     }
     else 
     {
@@ -140,11 +140,10 @@ static int pop(struct Queue *queue)
             result = INT32_MIN;
         } 
         else
-        {
+        {   
+            int i = 0;
             int element = 0; 
             element = queue->array[queue->top];
-
-            int i = 0;
 
             for (i = 0; i <= queue->size - 1; i++) 
             {
@@ -160,6 +159,7 @@ static int pop(struct Queue *queue)
     {
         result = INT32_MIN;
     }
+    
     return result;
 }
 
@@ -223,14 +223,14 @@ static void deinitialize(struct Queue *queue)
 {
     if (NULL != queue) 
     {   
-        free(queue);
-        queue = NULL;
-
         if (NULL != queue->array) 
         {
             free(queue->array);
             queue->array = NULL;
         }
+
+        free(queue);
+        queue = NULL;
     }
     else 
     {
@@ -260,7 +260,7 @@ int main()
         print_queue(queue);
 
         top = front(queue);
-        printf("The front element is: %d\n", front(queue));
+        printf("The front element is: %d\n", top);
 
         deinitialize(queue);
     }
