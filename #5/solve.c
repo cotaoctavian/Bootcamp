@@ -1,8 +1,16 @@
+/**************************************************************
+ *                      INCLUDES                              *
+ **************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include <limits.h>
+
+/**************************************************************
+ *                      DEFINES                               *
+ **************************************************************/
 
 #define BUFFER_SIZE 256
 
@@ -13,13 +21,24 @@ typedef struct _COMPONENT_DATA
 	size_t name_size;
 } COMPONENT_DATA, *PCOMPONENT_DATA;
 
+/**************************************************************
+ *                  FUNCTIONS DECLARATION	 				  *
+ **************************************************************/
+
+int serializeData(COMPONENT_DATA *component_info, void *buffer, size_t buffer_size, int *result);
+int deserialized_data(void *buffer, size_t buffer_size, COMPONENT_DATA *component_info, int *result);
+
+/**************************************************************
+ *                  FUNCTIONS DEFINITION	 				  *
+ **************************************************************/
+
 /** 
-* @brief 	 	 - This function serializes the struct into the buffer.
-* @param[in]     - COMPONENT_DATA *component_info - is the parameter that is going to be serialized
-			 	 - size_t buffer_size - is the size of the buffer
-* @param[in/out] - int *result - saves 0 if it's a success, non-zero if it's an error
-				 - void *buffer - is the parameter that stores the serialized data
-* @return 		 - The function returns the size of the serialized data
+* @brief 	 	 This function serializes the struct into the buffer.
+* @param[in]     component_info - is the parameter that is going to be serialized
+* @param[in]	 buffer_size 	  - is the size of the buffer
+* @param[in/out] result  - saves 0 if it's a success, non-zero if it's an error
+* @param[in/out] buffer  - is the parameter that stores the serialized data
+* @return 		 The function returns the size of the serialized data
 */
 int serializeData(COMPONENT_DATA *component_info, void *buffer, size_t buffer_size, int *result) 
 {
@@ -60,12 +79,12 @@ int serializeData(COMPONENT_DATA *component_info, void *buffer, size_t buffer_si
 }
 
 /**
-* @brief 		 - Deserialize the data from buffer and save it into the struct
-* @param[in] 	 - void *buffer stores the serialized buffer
-* @param[in/out] - COMPONENT_DATA *component_info is the struct that is going to be filled with the deserialized data
-				 - int *result saves 0 if it's a success, non-zero if it's an error
-				 - size_t buffer_size stores the size of the serialized buffer	
-* @return 		 - returns the size of the deserialized data
+* @brief 		 Deserialize the data from buffer and save it into the struct
+* @param[in] 	 buffer 		- stores the serialized buffer
+* @param[in/out] component_info - is the struct that is going to be filled with the deserialized data
+* @param[in/out] result 		- saves 0 if it's a success, non-zero if it's an error
+* @param[in/out] buffer_size 	- stores the size of the serialized buffer	
+* @return 		 returns the size of the deserialized data
 */
 int deserialized_data(void *buffer, size_t buffer_size, COMPONENT_DATA *component_info, int *result)
 {	
@@ -108,7 +127,7 @@ int deserialized_data(void *buffer, size_t buffer_size, COMPONENT_DATA *componen
 int main() 
 {	
 	int result = INT32_MIN;
-    	void *buffer = (void *) malloc (BUFFER_SIZE);
+    void *buffer = (void *) malloc (BUFFER_SIZE);
 
 	if (NULL != buffer) 
 	{
