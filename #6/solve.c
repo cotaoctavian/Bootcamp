@@ -22,7 +22,7 @@ struct Queue
 };
 
 /**************************************************************
- *                  FUNCTIONS DECLARATION	 	              *
+ *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
 struct Queue *initialize(unsigned int capacity);
@@ -35,7 +35,7 @@ void print_queue(struct Queue *queue);
 void deinitialize(struct Queue *queue);
 
 /**************************************************************
- *                  FUNCTIONS DEFINITION	 				  *
+ *                FUNCTIONS DEFINITION                        *
  **************************************************************/
 
 /**
