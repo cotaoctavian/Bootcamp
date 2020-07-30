@@ -10,8 +10,8 @@
  *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-void handle_data (void (*progress_callback)(int, int), char *data, int data_size);
-void progress_bar (int index, int data_size);
+static void handle_data (void (*progress_callback)(int, int), char *data, int data_size);
+static void progress_bar (int index, int data_size);
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
@@ -23,7 +23,7 @@ void progress_bar (int index, int data_size);
 * @param[in] - data              - is the string that is going to be parsed
 * @param[in] - data_size         - is the size of the string
 */
-void handle_data (void (*progress_callback)(int, int), char *data, int data_size)
+static void handle_data (void (*progress_callback)(int, int), char *data, int data_size)
 {
     if (NULL != data) 
     {
@@ -45,7 +45,7 @@ void handle_data (void (*progress_callback)(int, int), char *data, int data_size
 * @param[in] - index     - is the index of the string
 * @param[in] - data_size - is the size of the string
 */
-void progress_bar (int index, int data_size)
+static void progress_bar (int index, int data_size)
 {   
     if (0 != data_size) 
     {
