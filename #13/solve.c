@@ -32,6 +32,7 @@ bool is_number(char *str);
 void push(Stack *stack, char *current_data, char *previous_data);
 int pop(Stack *stack, char *current_data, char *previous_data);
 char *get_text_content(FILE *file);
+void deinitialize(Stack *stack);
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
@@ -163,6 +164,35 @@ int pop(Stack *stack, char *current_data, char *previous_data)
     return result;
 } 
 
+/**
+ * @brief     Deinitialize the stack.
+ * @param[in] stack - is the stack that is going to be deinitialized
+ */
+void deinitialize(Stack *stack) 
+{
+    if (NULL != stack)
+    {
+        if (NULL != stack->current_data)
+        {
+            free(stack->current_data);
+            stack->current_data = NULL;
+        }
+
+        if(NULL != stack->previous_data)
+        {
+            free(stack->previous_data);
+            stack->previous_data = NULL;
+        }
+
+        free(stack);
+        stack = NULL;
+    }
+    else
+    {
+        printf("The stack is NULL.");
+    }
+}
+
 /** 
 * @brief     Check if a string is a number.
 * @param[in] str - is the string that is going to be check if it's a number
@@ -200,7 +230,7 @@ bool is_number(char *str)
 char *get_text_content(FILE *file) 
 {   
     char *result = (char *) malloc (256);
-    
+
     if (NULL != file) 
     {
         /* Get the number of bytes */
