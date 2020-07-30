@@ -19,16 +19,16 @@
  *                 GLOBAL VARIABLES                           *
  **************************************************************/
 
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static bool run = true;
 
 /**************************************************************
  *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-void set_run(bool value);
-bool get_run(); 
-void *processing(void *args);
+static void set_run(bool value);
+static bool get_run(); 
+static void *processing(void *args);
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
@@ -38,7 +38,7 @@ void *processing(void *args);
  * @brief     This function sets the value of the run variable.
  * @param[in] value - is the variable that sets the value for run variable.
  */
-void set_run(bool value) 
+static void set_run(bool value) 
 {
     pthread_mutex_lock(&lock);
     run = value;
@@ -49,7 +49,7 @@ void set_run(bool value)
  * @brief  This function gets the value of the run variable.
  * @return true is the threads are running, false otherwise. 
  */
-bool get_run() 
+static bool get_run() 
 {
     bool local_run = false;
 
@@ -65,7 +65,7 @@ bool get_run()
  * @param[in] args - is the variable that is going to be printed passed as a parameter to thread's function
  * @return    returns NULL 
  */
-void *processing(void *args) 
+static void *processing(void *args) 
 {
     int *no_of_thread = (int *) args;
 
