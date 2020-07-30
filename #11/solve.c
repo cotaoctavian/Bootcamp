@@ -27,30 +27,30 @@ typedef struct _Queue
  *                 GLOBAL VARIABLES                           *
  **************************************************************/
 
-Queue *queue;
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t lock2 = PTHREAD_MUTEX_INITIALIZER;
-pthread_t consumer;
+static Queue *queue;
+static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+static pthread_mutex_t lock2 = PTHREAD_MUTEX_INITIALIZER;
+static pthread_t consumer;
 static int v = 0;
 
 /**************************************************************
  *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-Queue *init(unsigned int capacity);
-bool is_empty(Queue *queue);
-bool is_full(Queue *queue);
-void push(Queue *queue, int value);
-int pop(Queue *queue);
-int front(Queue *queue);
-int get_rear(Queue *queue);
-void initializeEngine();
-void deinitialize(Queue *queue);
-void *produce(void *args);
-void *on_consume(void *args);
-void start_engine();
-void stop_engine();
-void destroy_engine();
+static Queue *init(unsigned int capacity);
+static bool is_empty(Queue *queue);
+static bool is_full(Queue *queue);
+static int pop(Queue *queue);
+static int front(Queue *queue);
+static int get_rear(Queue *queue);
+static void push(Queue *queue, int value);
+static void initializeEngine();
+static void deinitialize(Queue *queue);
+static void *produce(void *args);
+static void *on_consume(void *args);
+static void start_engine();
+static void stop_engine();
+static void destroy_engine();
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
@@ -61,7 +61,7 @@ void destroy_engine();
 * @param[in] capacity - the parameter that stores the capacity of the queue
 * @return    returns the initialized queue
 */
-Queue *init(unsigned int capacity) 
+static Queue *init(unsigned int capacity) 
 {
     Queue *queue = (Queue *) malloc (sizeof(Queue));
 
@@ -79,7 +79,7 @@ Queue *init(unsigned int capacity)
 * @param[in] queue - is the queue
 * @return    returns false/true
 */
-bool is_empty(Queue *queue)
+static bool is_empty(Queue *queue)
 {
     int ret_val = 0;
 
@@ -100,7 +100,7 @@ bool is_empty(Queue *queue)
 * @param[in] queue - is the queue
 * @return    returns false/true
 */
-bool is_full(Queue *queue) 
+static bool is_full(Queue *queue) 
 {
     int ret_val = 0;
 
@@ -121,7 +121,7 @@ bool is_full(Queue *queue)
 * @param[in]     value - is the item that is going to be added into the queue
 * @param[in/out] queue - is the modified queue
 */ 
-void push(Queue *queue, int value) 
+static void push(Queue *queue, int value) 
 {
     if (NULL != queue) 
     {
@@ -149,7 +149,7 @@ void push(Queue *queue, int value)
 * @param[in/out] queue - is the modified queue
 * @return        returns the removed element or a negative value in case of an error
 */
-int pop(Queue *queue) 
+static int pop(Queue *queue) 
 {   
     int result = 0;
     
@@ -183,7 +183,7 @@ int pop(Queue *queue)
 * @param[in] queue - is the queue
 * @return    returns the top element or a negative value in case of an error
 */
-int front(Queue *queue) 
+static int front(Queue *queue) 
 {       
     int result = 0;
     
@@ -211,7 +211,7 @@ int front(Queue *queue)
 * @param[in] queue - is the queue
 * @return    returns the rear element or a negative value in case of an error
 */
-int get_rear(Queue *queue) 
+static int get_rear(Queue *queue) 
 {   
     int result = 0;
 
@@ -237,7 +237,7 @@ int get_rear(Queue *queue)
 /** 
 * @brief This function allocates memory to the queue
 */
-void initializeEngine() 
+static void initializeEngine() 
 {
     queue = init(QUEUE_SIZE);
 }
@@ -246,7 +246,7 @@ void initializeEngine()
 * @brief     Deallocate the memory for the struct. 
 * @param[in] queue - is the queue.
 */
-void deinitialize(Queue *queue) 
+static void deinitialize(Queue *queue) 
 {
     if(NULL != queue) 
     {   
@@ -264,7 +264,7 @@ void deinitialize(Queue *queue)
 * @param[in] args - is the value passed to the function to increment it
 * @return    return NULL
 */
-void *produce(void *args) 
+static void *produce(void *args) 
 {
     int *value = (int *) args;
 
@@ -286,7 +286,7 @@ void *produce(void *args)
 * @param[in] args - is empty
 * @return    return NULL
 */
-void *on_consume(void *args) 
+static void *on_consume(void *args) 
 {
     pthread_mutex_lock(&lock);
 
@@ -303,7 +303,7 @@ void *on_consume(void *args)
 /** 
 * @brief This function starts the consumer thread.
 */
-void start_engine() 
+static void start_engine() 
 {
     pthread_create(&consumer, NULL, on_consume, NULL);
 }
@@ -311,7 +311,7 @@ void start_engine()
 /** 
 * @brief This function stops the consumer thread.
 */
-void stop_engine() 
+static void stop_engine() 
 {
     pthread_join(consumer, NULL);
 }
@@ -319,7 +319,7 @@ void stop_engine()
 /**
 * @brief This function deallocate the memory of the queue
 */
-void destroy_engine() 
+static void destroy_engine() 
 {
     if (NULL != queue) 
     { 
