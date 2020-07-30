@@ -1,3 +1,7 @@
+/**************************************************************
+ *                      INCLUDES                              *
+ **************************************************************/
+
 #include <stdio.h>
 #include <ctype.h>
 #include <stdbool.h>
@@ -5,30 +9,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-/* 
-    COMMANDS:
-        -> open file - introducerea de la tst file name; -> done
-        -> save file - salveaza continutul curent al fisierului in acelasi fisier pe disc -> done
-        -> print file content - afiseaza textul -> done
-        -> write text at position - introduci textul ce trebuie inserat si pozitia la care se insereaza -> done
-        -> delete text from position - pozitia de la care se sterge si nr de caractere care trebuie sterse -> done
-        -> undo - sa anuleze efectul ultimei operatie de insertie sau stergere text -> done
-        -> redo - sa anuleze efectul ultimului undo -> done
-*/
+/**************************************************************
+ *                      DEFINES                               *
+ **************************************************************/
 
-/* 
-    How to do it?
-        -> implement a stack maybe (for undo / redo);
-
-    Undo delete -> Get the text back.
-    Undo insert -> Get the text back.
-
-    Redo delete -> Delete from position x to y.
-    Redo insert -> Insert from position x to y.
-    
-*/
-
-/* Stack's struct */
 typedef struct _Stack 
 {
     int top; /* top of the stack */
@@ -37,11 +21,26 @@ typedef struct _Stack
     char **previous_data; /* text before write / delete */
 }Stack;
 
+/**************************************************************
+ *                FUNCTIONS DECLARATION                       *
+ **************************************************************/
+
+Stack *init(unsigned int size);
+bool is_empty(Stack *stack);
+bool is_full(Stack *stack);
+bool is_number(char *str);
+void push(Stack *stack, char *current_data, char *previous_data);
+int pop(Stack *stack, char *current_data, char *previous_data);
+char *get_text_content(FILE *file);
+
+/**************************************************************
+ *                FUNCTIONS DEFINITION                        *
+ **************************************************************/
 
 /**
-* @brief     - Initialize a new stack. 
-* @param[in] - unsigned capacity - the parameter that stores the capacity of the queue
-* @return    - returns the initialized stack.
+* @brief     Initialize a new stack. 
+* @param[in] capacity - the parameter that stores the capacity of the queue
+* @return    returns the initialized stack.
 */
 Stack *init(unsigned int size) 
 {
@@ -55,9 +54,9 @@ Stack *init(unsigned int size)
 }
 
 /** 
-* @brief     - Check if the stack is empty.
-* @param[in] - Stack *stack - is the stack
-* @return    - returns false/true
+* @brief     Check if the stack is empty.
+* @param[in] stack - is the stack
+* @return    returns false/true
 */
 bool is_empty(Stack *stack)
 {
@@ -77,9 +76,9 @@ bool is_empty(Stack *stack)
 }
 
 /** 
-* @brief     - Check if the stack is full.
-* @param[in] - Stack *stack - is the stack
-* @return    - returns false/true
+* @brief     Check if the stack is full.
+* @param[in] stack - is the stack
+* @return    returns false/true
 */
 bool is_full(Stack *stack) 
 {
@@ -99,9 +98,10 @@ bool is_full(Stack *stack)
 }
 
 /** 
-* @brief         - Add item to the stack
-* @param[in]     - char *current_data and char *previous_data - are the items that are going to be added into the stack
-* @param[in/out] - Stack *stack is the modified stack
+* @brief         Add item to the stack
+* @param[in]     current_data  - item that is going to be added to the stack
+* @param[in]     previous_data - item that is going to be added to the stack
+* @param[in/out] stack         - is the modified stack
 */
 void push(Stack *stack, char *current_data, char *previous_data) 
 { 
@@ -128,11 +128,11 @@ void push(Stack *stack, char *current_data, char *previous_data)
 } 
 
 /** 
-* @brief         - Remove item from the stack
-* @param[in/out] - Stack *stack - is going to be modified because of the removed item
-*                - char *current_data - stores the value of the stack->current_data
-*                - char *previous_data - stores the value of the stack->previous_data
-* @return        - returns 1
+* @brief         Remove item from the stack
+* @param[in/out] stack         - is going to be modified because of the removed item
+* @param[in/out] current_data  - stores the value of the stack->current_data
+* @param[in/out] previous_data - stores the value of the stack->previous_data
+* @return        returns 1
 */
 int pop(Stack *stack, char *current_data, char *previous_data) 
 {   
@@ -164,8 +164,9 @@ int pop(Stack *stack, char *current_data, char *previous_data)
 } 
 
 /** 
-* @brief  - Check if a string is a number.
-* @return - returns false/true
+* @brief     Check if a string is a number.
+* @param[in] str - is the string that is going to be check if it's a number
+* @return    returns false/true
 */
 bool is_number(char *str) 
 {   
@@ -192,12 +193,14 @@ bool is_number(char *str)
 }
 
 /** 
-* @brief     - This function gets the text from the file
-* @param[in] - FILE *f - is the pointer of the file
-* @return    - returns the text
+* @brief     This function gets the text from the file
+* @param[in] f - is the pointer of the file
+* @return    returns the text
 */
 char *get_text_content(FILE *file) 
 {   
+    char *result = (char *) malloc (256);
+    
     if (NULL != file) 
     {
         /* Get the number of bytes */
@@ -219,12 +222,14 @@ char *get_text_content(FILE *file)
         /* Copy all the text into the buffer */
         fread(text, sizeof(char), numbytes, file);
 
-        return text;
+        strcpy(result, text);
     }
     else 
     {
-        return "NO";
+        strcpy(result, "NO");
     }
+
+    return result;
 }
 
 int main() {
@@ -240,10 +245,12 @@ int main() {
     char *current_file = (char *) malloc (RESPONSE_SIZE);
     bool access = false;
 
-    if (NULL == stack_undo || NULL == stack_redo || NULL == command || NULL == response || NULL == current_file) {
+    if ((NULL == stack_undo) || (NULL == stack_redo) || (NULL == command) || (NULL == response) || (NULL == current_file)) 
+    {
         printf("Something went wrong while allocating memory.");
     }
-    else {
+    else 
+    {
         printf("Hi, I'm your editor! =)\n");
         printf("Waiting for your commands...\n");
         printf("\n---------------------------------------\n\n");
@@ -554,7 +561,7 @@ int main() {
                         char *curr_data = (char *) malloc (MAX_TEXT_SIZE);
                         char *prev_data = (char *) malloc (MAX_TEXT_SIZE);
 
-                        if (NULL != curr_data && NULL != prev_data) 
+                        if ((NULL != curr_data) && (NULL != prev_data)) 
                         {
                             /* Remove action from undo's stack and add it to redo's stack */
                             if (0 != pop(stack_undo, curr_data, prev_data)) 
@@ -619,7 +626,7 @@ int main() {
                         char *curr_data = (char *) malloc (MAX_TEXT_SIZE);
                         char *prev_data = (char *) malloc (MAX_TEXT_SIZE);
 
-                        if (NULL != curr_data && NULL != prev_data) 
+                        if ((NULL != curr_data) && (NULL != prev_data)) 
                         {   
                             /* Remove action from undo's stack and add it to redo's stack */
                             if (0 != pop(stack_redo, curr_data, prev_data)) 
