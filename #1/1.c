@@ -9,7 +9,7 @@
  *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-void print_bits(uint32_t value);
+static void print_bits(uint32_t value);
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
@@ -19,7 +19,7 @@ void print_bits(uint32_t value);
 * @brief     Converting from base 10 to base 2.
 * @param[in] value - is integer in base 10
 */
-void print_bits(uint32_t value)
+static void print_bits(uint32_t value)
 {
     unsigned int bit = 1u << 31;
 
