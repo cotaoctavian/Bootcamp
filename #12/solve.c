@@ -23,15 +23,15 @@ typedef struct _Map
  *                 GLOBAL VARIABLES                           *
  **************************************************************/
 
-uint32_t pos = 0;
+static uint32_t pos = 0;
 
 /**************************************************************
  *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-void add_key(Map map[], char *key);
-void sort_items_by_apparitions(Map map[]);
-void print_items(Map map[]);
+static void add_key(Map map[], char *key);
+static void sort_items_by_apparitions(Map map[]);
+static void print_items(Map map[]);
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
@@ -42,7 +42,7 @@ void print_items(Map map[]);
 * @param[in] map - stores all the pairs of the type <key, value>
 * @param[in] key - is the key that we are looking for in the map
 */
-void add_key(Map map[], char *key) 
+static void add_key(Map map[], char *key) 
 {
     int i = 0;
     int found = 0;
@@ -68,7 +68,7 @@ void add_key(Map map[], char *key)
 * @brief     Sorts the items from the map based on the value of the keys.
 * @param[in] map - is the map that is going to be sorted
 */
-void sort_items_by_apparitions(Map map[])
+static void sort_items_by_apparitions(Map map[])
 {
     int i = 0;
     int j = 0;
@@ -94,7 +94,7 @@ void sort_items_by_apparitions(Map map[])
 /** 
 * @brief This functions prints out all the pairs from the map
 */
-void print_items(Map map[])
+static void print_items(Map map[])
 {
     int i = 0;
 
