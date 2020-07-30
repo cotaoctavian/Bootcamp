@@ -1,9 +1,24 @@
+/**************************************************************
+ *                      INCLUDES                              *
+ **************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 
+/**************************************************************
+ *                FUNCTIONS DECLARATION                       *
+ **************************************************************/
+
+int *alloc_in_lib();
+void free_in_lib(int *value);
+
+/**************************************************************
+ *                FUNCTIONS DEFINITION                        *
+ **************************************************************/
+
 /** 
-* @brief  - This function allocates memory to an integer
-* @return - returns the allocated variable.
+* @brief  This function allocates memory to an integer
+* @return returns the allocated variable.
 */
 int *alloc_in_lib() 
 {   
@@ -23,8 +38,8 @@ int *alloc_in_lib()
 }
 
 /**
-* @brief     - This function deallocates the memory of the variable
-* @param[in] - The variable that is going to be deallocated.
+* @brief     This function deallocates the memory of the variable
+* @param[in] The variable that is going to be deallocated.
 */
 void free_in_lib(int *value) 
 {
