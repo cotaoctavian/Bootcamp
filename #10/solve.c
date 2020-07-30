@@ -1,3 +1,7 @@
+/**************************************************************
+ *                      INCLUDES                              *
+ **************************************************************/
+
 #include <stdio.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -5,17 +9,34 @@
 #include <unistd.h>
 #include <signal.h>
 
+/**************************************************************
+ *                      DEFINES                               *
+ **************************************************************/
+
 #define THREAD_SIZE 10
+
+/**************************************************************
+ *                 GLOBAL VARIABLES                           *
+ **************************************************************/
 
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static bool run = true;
 
+/**************************************************************
+ *                FUNCTIONS DECLARATION                       *
+ **************************************************************/
+
 void set_run(bool value);
 bool get_run(); 
+void *processing(void *args);
+
+/**************************************************************
+ *                FUNCTIONS DEFINITION                        *
+ **************************************************************/
 
 /**
- * @brief     - This function sets the value of the run variable.
- * @param[in] - value - is the variable that sets the value for run variable.
+ * @brief     This function sets the value of the run variable.
+ * @param[in] value - is the variable that sets the value for run variable.
  */
 void set_run(bool value) 
 {
@@ -25,8 +46,8 @@ void set_run(bool value)
 }
 
 /**
- * @brief  - This function gets the value of the run variable.
- * @return - true is the threads are running, false otherwise. 
+ * @brief  This function gets the value of the run variable.
+ * @return true is the threads are running, false otherwise. 
  */
 bool get_run() 
 {
@@ -40,9 +61,9 @@ bool get_run()
 }
 
 /**
- * @brief     - This function prints out the value passed as a parameter
- * @param[in] - void *args - is the variable that is going to be printed passed as a parameter to thread's function
- * @return    - returns NULL 
+ * @brief     This function prints out the value passed as a parameter
+ * @param[in] args - is the variable that is going to be printed passed as a parameter to thread's function
+ * @return    returns NULL 
  */
 void *processing(void *args) 
 {
