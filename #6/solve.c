@@ -25,14 +25,14 @@ struct Queue
  *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-struct Queue *initialize(unsigned int capacity);
-bool is_empty(struct Queue *queue);
-bool is_full(struct Queue *queue);
-void push(struct Queue *queue, uint32_t value);
-int pop(struct Queue *queue);
-int front(struct Queue *queue);
-void print_queue(struct Queue *queue);
-void deinitialize(struct Queue *queue);
+static struct Queue *initialize(unsigned int capacity);
+static bool is_empty(struct Queue *queue);
+static bool is_full(struct Queue *queue);
+static void push(struct Queue *queue, uint32_t value);
+static int pop(struct Queue *queue);
+static int front(struct Queue *queue);
+static void print_queue(struct Queue *queue);
+static void deinitialize(struct Queue *queue);
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
@@ -43,7 +43,7 @@ void deinitialize(struct Queue *queue);
 * @param[in] capacity - the parameter that stores the capacity of the queue
 * @return    returns the initialized queue
 */
-struct Queue *initialize(unsigned int capacity) 
+static struct Queue *initialize(unsigned int capacity) 
 {
     struct Queue *queue = (struct Queue *) malloc (sizeof(struct Queue));
     
@@ -60,7 +60,7 @@ struct Queue *initialize(unsigned int capacity)
 * @param[in] queue - is the queue
 * @return    returns false/true
 */
-bool is_empty(struct Queue *queue)
+static bool is_empty(struct Queue *queue)
 {
     int ret_val = 0;
 
@@ -81,7 +81,7 @@ bool is_empty(struct Queue *queue)
 * @param[in] queue - is the queue
 * @return    returns false/true
 */
-bool is_full(struct Queue *queue) 
+static bool is_full(struct Queue *queue) 
 {
     int ret_val = 0;
 
@@ -102,7 +102,7 @@ bool is_full(struct Queue *queue)
 * @param[in]     value - is the item that is going to be added into the queue
 * @param[in/out] queue - is the modified queue
 */ 
-void push(struct Queue *queue, uint32_t value) 
+static void push(struct Queue *queue, uint32_t value) 
 {
     if (NULL != queue)
     {
@@ -128,7 +128,7 @@ void push(struct Queue *queue, uint32_t value)
 * @param[in/out] queue - is the modified queue
 * @return        returns the removed element or a negative value in case of an error
 */
-int pop(struct Queue *queue) 
+static int pop(struct Queue *queue) 
 {
     int result = 0;
 
@@ -168,7 +168,7 @@ int pop(struct Queue *queue)
 * @param[in] queue - is the queue
 * @return    returns the top element or a negative value in case of an error
 */
-int front(struct Queue *queue) 
+static int front(struct Queue *queue) 
 {
     int result = 0;
 
@@ -195,7 +195,7 @@ int front(struct Queue *queue)
 * @brief     Print the elements of the queue.
 * @param[in] queue - is the queue
 */
-void print_queue(struct Queue *queue)
+static void print_queue(struct Queue *queue)
 {   
     if (NULL != queue)
     {
@@ -219,7 +219,7 @@ void print_queue(struct Queue *queue)
 * @brief     Deallocate the memory for the struct. 
 * @param[in] queue - is the queue.
 */
-void deinitialize(struct Queue *queue) 
+static void deinitialize(struct Queue *queue) 
 {
     if (NULL != queue) 
     {   
