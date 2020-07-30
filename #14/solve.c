@@ -1,9 +1,17 @@
+/**************************************************************
+ *                      INCLUDES                              *
+ **************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <pthread.h>
 #include <stdint.h>
 #include <string.h>
+
+/**************************************************************
+ *                      DEFINES                               *
+ **************************************************************/
 
 #define QUEUE_SIZE 8
 
@@ -16,10 +24,31 @@ typedef struct _Queue
     char **message;
 } Queue;
 
-/* Declarations */
+/**************************************************************
+ *                 GLOBAL VARIABLES                           *
+ **************************************************************/
+
 Queue *queue;
 char words[256][8] = {"test", "haha", "nu", "queue", "salut", "idk", "buna", "pa"};
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
+/**************************************************************
+ *                FUNCTIONS DECLARATION                       *
+ **************************************************************/
+
+Queue *init(unsigned int capacity);
+bool is_empty(Queue *queue);
+bool is_full(Queue *queue);
+void push(Queue *queue, char *message);
+char *pop(Queue *queue);
+int front(Queue *queue);
+int get_rear(Queue *queue);
+void *sendMessage(void *args);
+void *receiveMessage(void *args);
+
+/**************************************************************
+ *                FUNCTIONS DEFINITION                        *
+ **************************************************************/
 
 /** 
 * @brief     - Initialize a new queue. 
@@ -202,9 +231,9 @@ int get_rear(Queue *queue)
 }
 
 /**
-* @brief - This is the producer function that adds elements to the queue
+* @brief     - This is the producer function that adds elements to the queue
 * @param[in] - void *args stores the value that is decremented to add n values to the queue
-* @return - returns NULL
+* @return    - returns NULL
 */
 void *sendMessage(void *args) 
 {
@@ -226,7 +255,7 @@ void *sendMessage(void *args)
 }
 
 /** 
-* @brief - Consumer function that reads the elements from the queue and clears it
+* @brief  - Consumer function that reads the elements from the queue and clears it
 * @return - returns NULL
 */
 void *receiveMessage(void *args) 
