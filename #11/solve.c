@@ -17,7 +17,8 @@
 
 typedef struct _Queue 
 {
-    int top, rear;
+    int top;
+    int rear;
     unsigned int capacity;
     unsigned int size;
     int *arr;
