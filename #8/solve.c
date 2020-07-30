@@ -1,13 +1,31 @@
+/**************************************************************
+ *                      INCLUDES                              *
+ **************************************************************/
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <pthread.h>
 
+/**************************************************************
+ *                      DEFINES                               *
+ **************************************************************/
+
 #define THREAD_SIZE 10
 
+/**************************************************************
+ *                FUNCTIONS DECLARATION                       *
+ **************************************************************/
+
+void *print_info(void *args);
+
+/**************************************************************
+ *                FUNCTIONS DEFINITION                        *
+ **************************************************************/
+
 /** 
-* @brief     - This function prints out the value passed as a parameter
-* @param[in] - void *args is the variable that is going to be printed passed as a parameter to thread's function
-* @return    - returns NULL 
+* @brief     This function prints out the value passed as a parameter
+* @param[in] args - is the variable that is going to be printed passed as a parameter to thread's function
+* @return    returns NULL 
 */
 void *print_info(void *args) 
 {
