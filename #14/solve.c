@@ -45,15 +45,16 @@ int front(Queue *queue);
 int get_rear(Queue *queue);
 void *sendMessage(void *args);
 void *receiveMessage(void *args);
+void deinitialize(Queue *queue);
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
  **************************************************************/
 
 /** 
-* @brief     - Initialize a new queue. 
-* @param[in] - capacity - the parameter that stores the capacity of the queue
-* @return    - returns the initialized queue
+* @brief     Initialize a new queue. 
+* @param[in] capacity - the parameter that stores the capacity of the queue
+* @return    returns the initialized queue
 */
 Queue *init(unsigned int capacity) 
 {
@@ -69,9 +70,9 @@ Queue *init(unsigned int capacity)
 }
 
 /** 
-* @brief     - Check if the queue is empty.
-* @param[in] - Queue *queue - is the queue
-* @return    - returns false/true
+* @brief     Check if the queue is empty.
+* @param[in] queue - is the queue
+* @return    returns false/true
 */
 bool is_empty(Queue *queue) 
 {
@@ -90,9 +91,9 @@ bool is_empty(Queue *queue)
 }
 
 /** 
-* @brief     - Check if the queue is full.
-* @param[in] - Queue *queue - is the queue
-* @return    - returns false/true
+* @brief     Check if the queue is full.
+* @param[in] queue - is the queue
+* @return    returns false/true
 */
 bool is_full(Queue *queue) 
 {
@@ -111,9 +112,9 @@ bool is_full(Queue *queue)
 }
 
 /** 
-* @brief         - Add an element to queue.
-* @param[in]     - char *message - is the item that is going to be added into the queue
-* @param[in/out] - struct Queue *queue is the modified queue
+* @brief         Add an element to queue.
+* @param[in]     message - is the item that is going to be added into the queue
+* @param[in/out] queue   - is the modified queue
 */ 
 void push(Queue *queue, char *message) 
 {
@@ -140,9 +141,9 @@ void push(Queue *queue, char *message)
 } 
 
 /** 
-* @brief         - Remove top element from queue and return it.
-* @param[in/out] - Queue *queue - is the modified queue
-* @return        - returns the removed element or a NULL value in case of an error
+* @brief         Remove top element from queue and return it.
+* @param[in/out] queue - is the modified queue
+* @return        returns the removed element or a NULL value in case of an error
 */
 char *pop(Queue *queue) 
 {
@@ -172,9 +173,9 @@ char *pop(Queue *queue)
 }
 
 /** 
-* @brief     - Get the top element.
-* @param[in] - Queue *queue - is the queue
-* @return    - returns the index of the top element or a negative value in case of an error
+* @brief     Get the top element.
+* @param[in] queue - is the queue
+* @return    returns the index of the top element or a negative value in case of an error
 */
 int front(Queue *queue) 
 {
@@ -201,9 +202,9 @@ int front(Queue *queue)
 }
 
 /** 
-* @brief     - Get the rear element.
-* @param[in] - Queue *queue - is the queue
-* @return    - returns the index of the rear element or a negative value in case of an error
+* @brief     Get the rear element.
+* @param[in] queue - is the queue
+* @return    returns the index of the rear element or a negative value in case of an error
 */
 int get_rear(Queue *queue) 
 {
@@ -231,9 +232,32 @@ int get_rear(Queue *queue)
 }
 
 /**
-* @brief     - This is the producer function that adds elements to the queue
-* @param[in] - void *args stores the value that is decremented to add n values to the queue
-* @return    - returns NULL
+ * @brief     Deinitialize the stack.
+ * @param[in] stack - is the stack that is going to be deinitialized
+ */
+void deinitialize(Queue *queue)
+{
+    if (NULL != queue)
+    {
+        if (NULL != queue->message) 
+        {
+            free(queue->message);
+            queue->message = NULL;
+        }
+
+        free(queue);
+        queue = NULL;
+    }
+    else
+    {
+        printf("The queue is NULL.");
+    }
+}
+
+/**
+* @brief     This is the producer function that adds elements to the queue
+* @param[in] args - stores the value that is decremented to add n values to the queue
+* @return    returns NULL
 */
 void *sendMessage(void *args) 
 {
@@ -255,8 +279,8 @@ void *sendMessage(void *args)
 }
 
 /** 
-* @brief  - Consumer function that reads the elements from the queue and clears it
-* @return - returns NULL
+* @brief  Consumer function that reads the elements from the queue and clears it
+* @return returns NULL
 */
 void *receiveMessage(void *args) 
 {
