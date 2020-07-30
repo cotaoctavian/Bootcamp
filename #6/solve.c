@@ -1,7 +1,15 @@
+/**************************************************************
+ *                      INCLUDES                              *
+ **************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+
+/**************************************************************
+ *                      DEFINES                               *
+ **************************************************************/
 
 #define CAPACITY 15
 
@@ -13,10 +21,27 @@ struct Queue
     int *array;
 };
 
+/**************************************************************
+ *                  FUNCTIONS DECLARATION	 	              *
+ **************************************************************/
+
+struct Queue *initialize(unsigned int capacity);
+bool is_empty(struct Queue *queue);
+bool is_full(struct Queue *queue);
+void push(struct Queue *queue, uint32_t value);
+int pop(struct Queue *queue);
+int front(struct Queue *queue);
+void print_queue(struct Queue *queue);
+void deinitialize(struct Queue *queue);
+
+/**************************************************************
+ *                  FUNCTIONS DEFINITION	 				  *
+ **************************************************************/
+
 /**
-* @brief     - Initialize a new queue. 
-* @param[in] - unsigned capacity - the parameter that stores the capacity of the queue
-* @return    - returns the initialized queue
+* @brief     Initialize a new queue. 
+* @param[in] capacity - the parameter that stores the capacity of the queue
+* @return    returns the initialized queue
 */
 struct Queue *initialize(unsigned int capacity) 
 {
@@ -31,9 +56,9 @@ struct Queue *initialize(unsigned int capacity)
 }
 
 /** 
-* @brief     - Check if the queue is empty.
-* @param[in] - struct Queue *queue - is the queue
-* @return    - returns false/true
+* @brief     Check if the queue is empty.
+* @param[in] queue - is the queue
+* @return    returns false/true
 */
 bool is_empty(struct Queue *queue)
 {
@@ -52,9 +77,9 @@ bool is_empty(struct Queue *queue)
 }
 
 /** 
-* @brief     - Check if the queue is full.
-* @param[in] - struct Queue *queue - is the queue
-* @return    - returns false/true
+* @brief     Check if the queue is full.
+* @param[in] queue - is the queue
+* @return    returns false/true
 */
 bool is_full(struct Queue *queue) 
 {
@@ -73,9 +98,9 @@ bool is_full(struct Queue *queue)
 }
 
 /**
-* @brief         - Add an element to queue.
-* @param[in]     - value - is the item that is going to be added into the queue
-* @param[in/out] - struct Queue *queue is the modified queue
+* @brief         Add an element to queue.
+* @param[in]     value - is the item that is going to be added into the queue
+* @param[in/out] queue - is the modified queue
 */ 
 void push(struct Queue *queue, uint32_t value) 
 {
@@ -99,9 +124,9 @@ void push(struct Queue *queue, uint32_t value)
 }
 
 /** 
-* @brief         - Remove top element from queue and return it.
-* @param[in/out] - struct Queue *queue is the modified queue
-* @return        - returns the removed element or a negative value in case of an error
+* @brief         Remove top element from queue and return it.
+* @param[in/out] queue - is the modified queue
+* @return        returns the removed element or a negative value in case of an error
 */
 int pop(struct Queue *queue) 
 {
@@ -139,9 +164,9 @@ int pop(struct Queue *queue)
 }
 
 /**
-* @brief     - Get the top element.
-* @param[in] - struct Queue *queue is the queues
-* @return    - returns the top element or a negative value in case of an error
+* @brief     Get the top element.
+* @param[in] queue - is the queue
+* @return    returns the top element or a negative value in case of an error
 */
 int front(struct Queue *queue) 
 {
@@ -167,8 +192,8 @@ int front(struct Queue *queue)
 }
 
 /** 
-* @brief     - Print the elements of the queue.
-* @param[in] - struct Queue *queue is the queue
+* @brief     Print the elements of the queue.
+* @param[in] queue - is the queue
 */
 void print_queue(struct Queue *queue)
 {   
@@ -191,8 +216,8 @@ void print_queue(struct Queue *queue)
 }
 
 /**
-* @brief     - Deallocate the memory for the struct. 
-* @param[in] - struct Queue *queue is the queue.
+* @brief     Deallocate the memory for the struct. 
+* @param[in] queue - is the queue.
 */
 void deinitialize(struct Queue *queue) 
 {
@@ -213,9 +238,8 @@ void deinitialize(struct Queue *queue)
     }
 }
 
-
-int main() {
-
+int main() 
+{
     int top = 0;
     int result = 0;
     struct Queue *queue = initialize(CAPACITY);
