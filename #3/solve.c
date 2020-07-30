@@ -1,14 +1,28 @@
+/**************************************************************
+ *                      INCLUDES                              *
+ **************************************************************/
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
+/**************************************************************
+ *                FUNCTIONS DECLARATION                       *
+ **************************************************************/
+
+void handle_data (void (*progress_callback)(int, int), char *data, int data_size);
+void progress_bar (int index, int data_size);
+
+/**************************************************************
+ *                FUNCTIONS DEFINITION                        *
+ **************************************************************/
+
 /**
 * @brief     - The function must print each decimal value of each byte contained in char *data.
-* @param[in] - *progress_callback - is used to call the function progress_callback
-*            - *data - is the string that is going to be parsed
-*            - data_size - is the size of the string
+* @param[in] - progress_callback - is used to call the function progress_callback
+* @param[in] - data              - is the string that is going to be parsed
+* @param[in] - data_size         - is the size of the string
 */
-
 void handle_data (void (*progress_callback)(int, int), char *data, int data_size)
 {
     if (NULL != data) 
@@ -28,8 +42,8 @@ void handle_data (void (*progress_callback)(int, int), char *data, int data_size
 
 /** 
 * @brief     - The function is used to print out the progress bar
-* @param[in] - index - is the index of the string
-*            - data_size - is the size of the string
+* @param[in] - index     - is the index of the string
+* @param[in] - data_size - is the size of the string
 */
 void progress_bar (int index, int data_size)
 {   
