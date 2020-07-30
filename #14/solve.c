@@ -317,11 +317,7 @@ int main()
         pthread_join(producer, NULL);
         pthread_join(consumer, NULL);
 
-        if (NULL != queue) 
-        {
-            free(queue);
-            queue != NULL;
-        }   
+        deinitialize(queue);
     }
 
     return 0;
