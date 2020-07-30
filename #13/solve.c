@@ -355,6 +355,12 @@ int main() {
                     }
 
                     printf("\n---------------------------------------\n\n");
+
+                    if (NULL != res) 
+                    {
+                        free(res);
+                        res = NULL;
+                    }
                 } 
                 else 
                 {
@@ -450,6 +456,11 @@ int main() {
                         }
                     }
 
+                    if (NULL != prev_text) 
+                    {
+                        free(prev_text);
+                        prev_text = NULL;
+                    }
                 } 
                 else 
                 {
@@ -464,7 +475,8 @@ int main() {
                 {
                     printf("Write the start position from where you want to delete:\n");
 
-                    size_t position_start_size, position_finish_size;
+                    size_t position_start_size = 0;
+                    size_t position_finish_size = 0;
 
                     /* Allocate memory */
                     char *position_start = (char *) malloc (POSITION_SIZE);
@@ -535,7 +547,7 @@ int main() {
                         else 
                         {
                             int i = 0, k = 0;
-                            char curr_text[256] = "";
+                            char curr_text[256] = {0};
 
                             for (i = 0; prev_text[i] != '\0'; i++) 
                             {
@@ -572,7 +584,15 @@ int main() {
                                 free(position_finish);
                                 position_finish = NULL;
                             }
+
+                            strcpy(curr_text, "");
                         }
+                    }
+
+                    if (NULL != prev_text) 
+                    {
+                        free(prev_text);
+                        prev_text = NULL;
                     }
                 }
                 else 
@@ -715,6 +735,27 @@ int main() {
                 printf("This command doesn't exist. Try another one.\n");
             }
         }
+    }
+
+    deinitialize(stack_undo);
+    deinitialize(stack_redo);
+
+    if (NULL != command) 
+    {
+        free(command);
+        command = NULL;
+    }
+
+    if (NULL != current_file)
+    {
+        free(current_file);
+        current_file = NULL;
+    }
+
+    if (NULL != response)
+    {
+        free(response);
+        response = NULL;
     }
 
     return 0;
