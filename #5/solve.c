@@ -5,173 +5,269 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <string.h>
-#include <limits.h>
+#include <stdbool.h>
 
 /**************************************************************
  *                      DEFINES                               *
  **************************************************************/
 
-#define BUFFER_SIZE 256
+#define CAPACITY 15
 
-typedef struct _COMPONENT_DATA
+struct Queue 
 {
-	int attributes;
-	char *name;
-	size_t name_size;
-} COMPONENT_DATA, *PCOMPONENT_DATA;
+    int top;
+    unsigned int size;
+    unsigned int capacity;
+    int *array;
+};
 
 /**************************************************************
- *                  FUNCTIONS DECLARATION	 				  *
+ *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-static int serializeData(COMPONENT_DATA *component_info, void *buffer, size_t buffer_size, int *result);
-static int deserialized_data(void *buffer, size_t buffer_size, COMPONENT_DATA *component_info, int *result);
+static struct Queue *initialize(unsigned int capacity);
+static int is_empty(struct Queue *queue);
+static int is_full(struct Queue *queue);
+static int pop(struct Queue *queue);
+static int front(struct Queue *queue);
+static void push(struct Queue *queue, uint32_t value);
+static void print_queue(struct Queue *queue);
+static void deinitialize(struct Queue *queue);
 
 /**************************************************************
- *                  FUNCTIONS DEFINITION	 				  *
+ *                FUNCTIONS DEFINITION                        *
  **************************************************************/
+
+/**
+* @brief     Initialize a new queue. 
+* @param[in] capacity - the parameter that stores the capacity of the queue
+* @return    returns the initialized queue
+*/
+static struct Queue *initialize(unsigned int capacity) 
+{
+    struct Queue *queue = (struct Queue *) malloc (sizeof(struct Queue));
+    
+    queue->capacity = capacity;
+    queue->size = 0;
+    queue->array = (int *) malloc (capacity * sizeof(int));
+    queue->top = 0;
+
+    return queue;
+}
 
 /** 
-* @brief 	 	 This function serializes the struct into the buffer.
-* @param[in]     component_info - is the parameter that is going to be serialized
-* @param[in/out] buffer  	    - is the parameter that stores the serialized data
-* @param[in]	 buffer_size 	- is the size of the buffer
-* @param[in/out] result  	    - saves 0 if it's a success, non-zero if it's an error
-* @return 		 The function returns the size of the serialized data
+* @brief     Check if the queue is empty.
+* @param[in] queue - is the queue
+* @return    returns false/true
 */
-static int serializeData(COMPONENT_DATA *component_info, void *buffer, size_t buffer_size, int *result) 
+static int is_empty(struct Queue *queue)
 {
-	int buffer_next = 0;
-	
-	if ((NULL == component_info) || (NULL == buffer) || (0 == buffer_size) || (NULL == result))
-	{
-		printf("One of the parameters is null.");
-		*result = -2;
-	} 
-	else
-	{
-		memcpy(buffer + buffer_next, &component_info->attributes, sizeof(int));
-		buffer_next += sizeof(int);
+    int ret_val = 0;
 
-		memcpy(buffer + buffer_next, &component_info->name_size, sizeof(component_info->name_size));
-		buffer_next += sizeof(component_info->name_size);
+    if (NULL != queue) 
+    {
+        ret_val = queue->size == 0 ? 1 : 0; 
+    } 
+    else 
+    {
+        ret_val = -1;
+    }
 
-		memcpy(buffer + buffer_next, &component_info->name, component_info->name_size);
-		buffer_next += component_info->name_size;
+    return ret_val;
+}
 
-		if (buffer_next <= buffer_size) 
-		{ 
-			*result = 0;
-		}
-		else 
-		{ 
-			*result = -1;
-		}
-	}
+/** 
+* @brief     Check if the queue is full.
+* @param[in] queue - is the queue
+* @return    returns false/true
+*/
+static int is_full(struct Queue *queue) 
+{
+    int ret_val = 0;
 
-	return buffer_next;
+    if (NULL != queue)
+    {
+        ret_val = queue->size == queue->capacity ? 1 : 0;
+    }
+    else 
+    {
+        ret_val = -1;
+    }
+
+    return ret_val;
 }
 
 /**
-* @brief 		 Deserialize the data from buffer and save it into the struct
-* @param[in] 	 buffer 		- stores the serialized buffer
-* @param[in/out] buffer_size 	- stores the size of the serialized buffer
-* @param[in/out] component_info - is the struct that is going to be filled with the deserialized data
-* @param[in/out] result 		- saves 0 if it's a success, non-zero if it's an error	
-* @return 		 returns the size of the deserialized data
+* @brief         Add an element to queue.
+* @param[in]     value - is the item that is going to be added into the queue
+* @param[in/out] queue - is the modified queue
+*/ 
+static void push(struct Queue *queue, uint32_t value) 
+{
+    if (NULL != queue)
+    {
+        /* Check if the size of the queue is lower than the capacity of it. */
+        if (0 != is_full(queue)) 
+        {
+            printf("The queue is full.");
+        }
+        else 
+        {
+            queue->array[queue->size] = value;
+            queue->size += 1;
+        }
+    } 
+    else 
+    {
+        printf("The queue is NULL.");
+    }
+}
+
+/** 
+* @brief         Remove top element from queue and return it.
+* @param[in/out] queue - is the modified queue
+* @return        returns the removed element or a negative value in case of an error
 */
-static int deserialized_data(void *buffer, size_t buffer_size, COMPONENT_DATA *component_info, int *result)
-{	
-	int buffer_next = 0;
-	
-	if ((NULL == component_info) || (NULL == buffer) || (0 == buffer_size) || (NULL == result))
-	{
-		printf("One of the parameters is null.");
-		*result = -2;
-	}
-	else 
-	{
-		memcpy(&component_info->attributes, buffer, sizeof(int));
-		buffer_next += sizeof(int);
-		
-		memcpy(&component_info->name_size, buffer + buffer_next, sizeof(component_info->name_size));
-		buffer_next += sizeof(component_info->name_size);
+static int pop(struct Queue *queue) 
+{
+    int result = 0;
 
-		component_info->name = (char *) malloc (component_info->name_size);
+    if (NULL != queue) 
+    {
+        if (0 != is_empty(queue)) 
+        {
+            printf("The queue is empty. Invalid operation.");
+            result = INT32_MIN;
+        } 
+        else
+        {   
+            int i = 0;
+            int element = 0; 
+            element = queue->array[queue->top];
 
-		if (NULL != component_info->name) 
-		{
-			memcpy(&component_info->name, buffer + buffer_next, component_info->name_size);
-			buffer_next += component_info->name_size;
+            for (i = 0; i <= queue->size - 1; i++) 
+            {
+                queue->array[i] = queue->array[i + 1];
+            }
 
-			if (buffer_next <= buffer_size) 
-			{ 
-				*result = 0;
-			}
-			else 
-			{ 
-				*result = -1;
-			}
-		}
-		else 
-		{
-			*result = -1;
-		}
-	}
+            queue->size -= 1;
+            
+            result = element;
+        }
+    }
+    else 
+    {
+        result = INT32_MIN;
+    }
+    
+    return result;
+}
 
-	return buffer_next;
-} 
+/**
+* @brief     Get the top element.
+* @param[in] queue - is the queue
+* @return    returns the top element or a negative value in case of an error
+*/
+static int front(struct Queue *queue) 
+{
+    int result = 0;
+
+    if (NULL != queue)
+    {
+         if (0 != is_empty(queue)) 
+        {   
+            result = INT32_MIN;
+        }
+        else 
+        {
+            result = queue->array[queue->top];
+        }
+    }
+    else
+    {
+        result = INT32_MIN;
+    }
+    
+    return result;
+}
+
+/** 
+* @brief     Print the elements of the queue.
+* @param[in] queue - is the queue
+*/
+static void print_queue(struct Queue *queue)
+{   
+    if (NULL != queue)
+    {
+        int i = 0;
+        printf("The queue values are: ");
+
+        for (i = 0; i <= queue->size - 1; i++) 
+        {
+            printf("%d ", queue->array[i]);
+        }
+
+        printf("\n");
+    }   
+    else 
+    {
+        printf("The queue is NULL.");
+    }
+}
+
+/**
+* @brief     Deallocate the memory for the struct. 
+* @param[in] queue - is the queue.
+*/
+static void deinitialize(struct Queue *queue) 
+{
+    if (NULL != queue) 
+    {   
+        if (NULL != queue->array) 
+        {
+            free(queue->array);
+            queue->array = NULL;
+        }
+
+        free(queue);
+        queue = NULL;
+    }
+    else 
+    {
+        printf("The queue is NULL.");
+    }
+}
 
 int main() 
-{	
-	int result = INT32_MIN;
-	void *buffer = (void *) malloc (BUFFER_SIZE);
+{
+    int top = 0;
+    int result = 0;
+    struct Queue *queue = initialize(CAPACITY);
 
-	if (NULL != buffer) 
-	{
-		COMPONENT_DATA data = {0, "", 0};
+    if (NULL != queue) 
+    {
+        push(queue, 6);
+        push(queue, 67);
+        push(queue, 21);
+        push(queue, 3);
 
-		data.attributes = 3;
-		data.name = strdup("testare1321321321");
-		data.name_size = strlen(data.name);
+        print_queue(queue);
+        top = front(queue);
+        printf("The front element is: %d\n", top);
 
-		/* Serialize data */
-		int buffer_size = serializeData(&data, buffer, BUFFER_SIZE, &result);
+        result = pop(queue);
+        printf("The removed item is: %d\n", result);
+        print_queue(queue);
 
-		/* Check if everything went fine */
-		if (0 == result)
-		{
-		/* Allocate memory to struct variable */
-			COMPONENT_DATA copy = {0, "", 0};
+        top = front(queue);
+        printf("The front element is: %d\n", top);
 
-			/* Deserialize data */
-			int res = deserialized_data(buffer, buffer_size, &copy, &result);
-
-			/* Check if everything went fine */
-			if (0 == result) 
-			{
-				printf("The deserialized data is:\n");
-
-				printf("Attributes: %d\n", copy.attributes);
-				printf("Name: %s\n", copy.name);
-				printf("Name size: %lu\n", copy.name_size);
-
-				printf("Size in bytes of the deserialized data: %d\n", res);
-			} 
-			else 
-			{
-				printf("Something went wrong while deserializing the data...\n");
-			}
-		}
-		else 
-		{
-			printf("Something went wrong while serializing the data...\n");
-		}
-
-		free(buffer);
-		buffer = NULL;
-	}
+        deinitialize(queue);
+    }
+    else 
+    {
+        printf("The queue is NULL.");
+    }
 
     return 0;
 }
