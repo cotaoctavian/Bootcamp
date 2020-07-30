@@ -16,13 +16,13 @@
  *                 GLOBAL VARIABLES                           *
  **************************************************************/
 
-pthread_mutex_t lock;
+static pthread_mutex_t lock;
 
 /**************************************************************
  *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-void *print_info(void *args);
+static void *print_info(void *args);
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
@@ -33,7 +33,7 @@ void *print_info(void *args);
 * @param[in] args - is the variable that is going to be printed passed as a parameter to thread's function
 * @return    returns NULL 
 */
-void *print_info(void *args) 
+static void *print_info(void *args) 
 {
     /* Lock the thread using mutex */
     pthread_mutex_lock(&lock);
