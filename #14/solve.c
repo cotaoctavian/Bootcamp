@@ -28,24 +28,24 @@ typedef struct _Queue
  *                 GLOBAL VARIABLES                           *
  **************************************************************/
 
-Queue *queue;
-char words[256][8] = {"test", "haha", "nu", "queue", "salut", "idk", "buna", "pa"};
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+static Queue *queue;
+static char words[256][8] = {"test", "haha", "nu", "queue", "salut", "idk", "buna", "pa"};
+static pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 /**************************************************************
  *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-Queue *init(unsigned int capacity);
-bool is_empty(Queue *queue);
-bool is_full(Queue *queue);
-void push(Queue *queue, char *message);
-char *pop(Queue *queue);
-int front(Queue *queue);
-int get_rear(Queue *queue);
-void *sendMessage(void *args);
-void *receiveMessage(void *args);
-void deinitialize(Queue *queue);
+static Queue *init(unsigned int capacity);
+static bool is_empty(Queue *queue);
+static bool is_full(Queue *queue);
+static void push(Queue *queue, char *message);
+static char *pop(Queue *queue);
+static int front(Queue *queue);
+static int get_rear(Queue *queue);
+static void *sendMessage(void *args);
+static void *receiveMessage(void *args);
+static void deinitialize(Queue *queue);
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
@@ -56,7 +56,7 @@ void deinitialize(Queue *queue);
 * @param[in] capacity - the parameter that stores the capacity of the queue
 * @return    returns the initialized queue
 */
-Queue *init(unsigned int capacity) 
+static Queue *init(unsigned int capacity) 
 {
     Queue *queue = (Queue *) malloc (sizeof(Queue));
 
@@ -74,7 +74,7 @@ Queue *init(unsigned int capacity)
 * @param[in] queue - is the queue
 * @return    returns false/true
 */
-bool is_empty(Queue *queue) 
+static bool is_empty(Queue *queue) 
 {
     int ret_val = 0;
 
@@ -95,7 +95,7 @@ bool is_empty(Queue *queue)
 * @param[in] queue - is the queue
 * @return    returns false/true
 */
-bool is_full(Queue *queue) 
+static bool is_full(Queue *queue) 
 {
     int ret_val = 0;
 
@@ -116,7 +116,7 @@ bool is_full(Queue *queue)
 * @param[in]     message - is the item that is going to be added into the queue
 * @param[in/out] queue   - is the modified queue
 */ 
-void push(Queue *queue, char *message) 
+static void push(Queue *queue, char *message) 
 {
     if (NULL != queue)
     {
@@ -145,7 +145,7 @@ void push(Queue *queue, char *message)
 * @param[in/out] queue - is the modified queue
 * @return        returns the removed element or a NULL value in case of an error
 */
-char *pop(Queue *queue) 
+static char *pop(Queue *queue) 
 {
     char *result = NULL;
     if (NULL != queue) 
@@ -177,7 +177,7 @@ char *pop(Queue *queue)
 * @param[in] queue - is the queue
 * @return    returns the index of the top element or a negative value in case of an error
 */
-int front(Queue *queue) 
+static int front(Queue *queue) 
 {
     int result = 0;
 
@@ -206,7 +206,7 @@ int front(Queue *queue)
 * @param[in] queue - is the queue
 * @return    returns the index of the rear element or a negative value in case of an error
 */
-int get_rear(Queue *queue) 
+static int get_rear(Queue *queue) 
 {
     int result = 0;
     
@@ -235,7 +235,7 @@ int get_rear(Queue *queue)
  * @brief     Deinitialize the stack.
  * @param[in] stack - is the stack that is going to be deinitialized
  */
-void deinitialize(Queue *queue)
+static void deinitialize(Queue *queue)
 {
     if (NULL != queue)
     {
@@ -259,7 +259,7 @@ void deinitialize(Queue *queue)
 * @param[in] args - stores the value that is decremented to add n values to the queue
 * @return    returns NULL
 */
-void *sendMessage(void *args) 
+static void *sendMessage(void *args) 
 {
     pthread_mutex_lock(&lock);
     int *no_of_items = (int *) args;
@@ -282,7 +282,7 @@ void *sendMessage(void *args)
 * @brief  Consumer function that reads the elements from the queue and clears it
 * @return returns NULL
 */
-void *receiveMessage(void *args) 
+static void *receiveMessage(void *args) 
 {
     pthread_mutex_lock(&lock);
 
