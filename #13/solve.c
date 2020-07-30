@@ -25,14 +25,14 @@ typedef struct _Stack
  *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-Stack *init(unsigned int size);
-bool is_empty(Stack *stack);
-bool is_full(Stack *stack);
-bool is_number(char *str);
-void push(Stack *stack, char *current_data, char *previous_data);
-int pop(Stack *stack, char *current_data, char *previous_data);
-char *get_text_content(FILE *file);
-void deinitialize(Stack *stack);
+static Stack *init(unsigned int size);
+static bool is_empty(Stack *stack);
+static bool is_full(Stack *stack);
+static bool is_number(char *str);
+static void push(Stack *stack, char *current_data, char *previous_data);
+static int pop(Stack *stack, char *current_data, char *previous_data);
+static char *get_text_content(FILE *file);
+static void deinitialize(Stack *stack);
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
@@ -43,7 +43,7 @@ void deinitialize(Stack *stack);
 * @param[in] capacity - the parameter that stores the capacity of the queue
 * @return    returns the initialized stack.
 */
-Stack *init(unsigned int size) 
+static Stack *init(unsigned int size) 
 {
     Stack *stack = (Stack *) malloc (sizeof(Stack));
     stack->top = -1;
@@ -59,7 +59,7 @@ Stack *init(unsigned int size)
 * @param[in] stack - is the stack
 * @return    returns false/true
 */
-bool is_empty(Stack *stack)
+static bool is_empty(Stack *stack)
 {
     int result = 0;
 
@@ -81,7 +81,7 @@ bool is_empty(Stack *stack)
 * @param[in] stack - is the stack
 * @return    returns false/true
 */
-bool is_full(Stack *stack) 
+static bool is_full(Stack *stack) 
 {
     int result = 0;
 
@@ -104,7 +104,7 @@ bool is_full(Stack *stack)
 * @param[in]     previous_data - item that is going to be added to the stack
 * @param[in/out] stack         - is the modified stack
 */
-void push(Stack *stack, char *current_data, char *previous_data) 
+static void push(Stack *stack, char *current_data, char *previous_data) 
 { 
     if (NULL != stack) 
     {
@@ -135,7 +135,7 @@ void push(Stack *stack, char *current_data, char *previous_data)
 * @param[in/out] previous_data - stores the value of the stack->previous_data
 * @return        returns 1
 */
-int pop(Stack *stack, char *current_data, char *previous_data) 
+static int pop(Stack *stack, char *current_data, char *previous_data) 
 {   
     int result = 0;
 
@@ -168,7 +168,7 @@ int pop(Stack *stack, char *current_data, char *previous_data)
  * @brief     Deinitialize the stack.
  * @param[in] stack - is the stack that is going to be deinitialized
  */
-void deinitialize(Stack *stack) 
+static void deinitialize(Stack *stack) 
 {
     if (NULL != stack)
     {
@@ -198,7 +198,7 @@ void deinitialize(Stack *stack)
 * @param[in] str - is the string that is going to be check if it's a number
 * @return    returns false/true
 */
-bool is_number(char *str) 
+static bool is_number(char *str) 
 {   
     bool result = true;
 
@@ -227,7 +227,7 @@ bool is_number(char *str)
 * @param[in] f - is the pointer of the file
 * @return    returns the text
 */
-char *get_text_content(FILE *file) 
+static char *get_text_content(FILE *file) 
 {   
     char *result = (char *) malloc (256);
 
