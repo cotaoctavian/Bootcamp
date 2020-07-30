@@ -16,7 +16,7 @@
  *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-void *print_info(void *args);
+static void *print_info(void *args);
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
@@ -27,7 +27,7 @@ void *print_info(void *args);
 * @param[in] args - is the variable that is going to be printed passed as a parameter to thread's function
 * @return    returns NULL 
 */
-void *print_info(void *args) 
+static void *print_info(void *args) 
 {
     int *ptr = (int *) args;
     printf("%d\n", *ptr);
