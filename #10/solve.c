@@ -71,7 +71,7 @@ static void *processing(void *args)
 
     printf("%s%d%s\n", "Thread #", *no_of_thread, " is working.");
 
-    while (get_run()) 
+    while (0 != get_run()) 
     {
 
     }
