@@ -29,7 +29,7 @@ static void handle_data (void (*progress_callback)(int, int), char *data, int da
     {
         int i = 0;
 
-        for (i = 0; data[i]; i++) 
+        for (i = 0; i <= data_size; i++) 
         {
             progress_callback(i, data_size);
         }
@@ -47,15 +47,15 @@ static void handle_data (void (*progress_callback)(int, int), char *data, int da
 */
 static void progress_bar (int index, int data_size)
 {   
+    int i = 0;
+    int percent = 0;
+    float temp = 0.0f;
+
     if (0 != data_size) 
     {
-        float temp = 0.0f;
-        int percent = 0;
-
         temp = ((float) index / (float) data_size);
         percent = temp * 100;
         
-        int i = 0;
         printf("%s", "[");
 
         for (i = 1; i <= 100; i++) 
@@ -77,9 +77,9 @@ int main()
 
     scanf("%s", buffer);
 
-    if (NULL != buffer || strlen(buffer) == 0) 
+    if ((NULL != buffer) && (0 != strlen(buffer))) 
     {
-        handle_data(progress_bar, buffer, strlen(buffer) - 1);
+        handle_data(progress_bar, buffer, strlen(buffer));
     }
     else 
     {
