@@ -1,8 +1,16 @@
+/**************************************************************
+ *                      INCLUDES                              *
+ **************************************************************/
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <pthread.h>
 #include <stdlib.h>
+
+/**************************************************************
+ *                      DEFINES                               *
+ **************************************************************/
 
 #define QUEUE_SIZE 10
 #define THREADS 10
@@ -15,19 +23,45 @@ typedef struct _Queue
     int *arr;
 } Queue;
 
-/* Declarations */
+/**************************************************************
+ *                 GLOBAL VARIABLES                           *
+ **************************************************************/
+
 Queue *queue;
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t lock2 = PTHREAD_MUTEX_INITIALIZER;
 pthread_t consumer;
 static int v = 0;
 
+/**************************************************************
+ *                FUNCTIONS DECLARATION                       *
+ **************************************************************/
+
+Queue *init(unsigned int capacity);
+bool is_empty(Queue *queue);
+bool is_full(Queue *queue);
+void push(Queue *queue, int value);
+int pop(Queue *queue);
+int front(Queue *queue);
+int get_rear(Queue *queue);
+void initializeEngine();
+void deinitialize(Queue *queue);
+void *produce(void *args);
+void *on_consume(void *args);
+void start_engine();
+void stop_engine();
+void destroy_engine();
+
+/**************************************************************
+ *                FUNCTIONS DEFINITION                        *
+ **************************************************************/
+
 /** 
-* @brief     - Initialize a new queue. 
-* @param[in] - unsigned capacity - the parameter that stores the capacity of the queue
-* @return    - returns the initialized queue
+* @brief     Initialize a new queue. 
+* @param[in] capacity - the parameter that stores the capacity of the queue
+* @return    returns the initialized queue
 */
-Queue *init(unsigned capacity) 
+Queue *init(unsigned int capacity) 
 {
     Queue *queue = (Queue *) malloc (sizeof(Queue));
 
@@ -41,9 +75,9 @@ Queue *init(unsigned capacity)
 }
 
 /** 
-* @brief     - Check if the queue is empty.
-* @param[in] - struct Queue *queue - is the queue
-* @return    - returns false/true
+* @brief     Check if the queue is empty.
+* @param[in] queue - is the queue
+* @return    returns false/true
 */
 bool is_empty(Queue *queue)
 {
@@ -62,9 +96,9 @@ bool is_empty(Queue *queue)
 }
 
 /** 
-* @brief     - Check if the queue is full.
-* @param[in] - struct Queue *queue - is the queue
-* @return    - returns false/true
+* @brief     Check if the queue is full.
+* @param[in] queue - is the queue
+* @return    returns false/true
 */
 bool is_full(Queue *queue) 
 {
@@ -83,9 +117,9 @@ bool is_full(Queue *queue)
 }
 
 /** 
-* @brief         - Add an element to queue.
-* @param[in]     - uint32_t value - is the item that is going to be added into the queue
-* @param[in/out] - struct Queue *queue is the modified queue
+* @brief         Add an element to queue.
+* @param[in]     value - is the item that is going to be added into the queue
+* @param[in/out] struct Queue *queue is the modified queue
 */ 
 void push(Queue *queue, int value) 
 {
@@ -111,9 +145,9 @@ void push(Queue *queue, int value)
 } 
 
 /** 
-* @brief         - Remove top element from queue and return it.
-* @param[in/out] - struct Queue *queue - is the modified queue
-* @return        - returns the removed element or a negative value in case of an error
+* @brief         Remove top element from queue and return it.
+* @param[in/out] queue - is the modified queue
+* @return        returns the removed element or a negative value in case of an error
 */
 int pop(Queue *queue) 
 {   
@@ -145,9 +179,9 @@ int pop(Queue *queue)
 }
 
 /** 
-* @brief     - Get the top element.
-* @param[in] - struct Queue *queue - is the queue
-* @return    - returns the top element or a negative value in case of an error
+* @brief     Get the top element.
+* @param[in] queue - is the queue
+* @return    returns the top element or a negative value in case of an error
 */
 int front(Queue *queue) 
 {       
@@ -173,9 +207,9 @@ int front(Queue *queue)
 }
 
 /** 
-* @brief     - Get the rear element.
-* @param[in] - struct Queue *queue - is the queue
-* @return    - returns the rear element or a negative value in case of an error
+* @brief     Get the rear element.
+* @param[in] queue - is the queue
+* @return    returns the rear element or a negative value in case of an error
 */
 int get_rear(Queue *queue) 
 {   
@@ -201,7 +235,7 @@ int get_rear(Queue *queue)
 }
 
 /** 
-* @brief - This function allocates memory to the queue
+* @brief This function allocates memory to the queue
 */
 void initializeEngine() 
 {
@@ -209,8 +243,8 @@ void initializeEngine()
 }
 
 /**
-* @brief     - Deallocate the memory for the struct. 
-* @param[in] - Queue *queue is the queue.
+* @brief     Deallocate the memory for the struct. 
+* @param[in] queue - is the queue.
 */
 void deinitialize(Queue *queue) 
 {
@@ -226,9 +260,9 @@ void deinitialize(Queue *queue)
 }
 
 /** 
-* @brief     - This function is used by producer threads to print their id and the value passed as an argument, also incrementing it and push it to the queue.
-* @param[in] - void *args is the value passed to the function to increment it
-* @return    - return NULL
+* @brief     This function is used by producer threads to print their id and the value passed as an argument, also incrementing it and push it to the queue.
+* @param[in] args - is the value passed to the function to increment it
+* @return    return NULL
 */
 void *produce(void *args) 
 {
@@ -248,9 +282,9 @@ void *produce(void *args)
 }
 
 /** 
-* @brief     - This function is used by consumer thread to print the values from the queue and clear it.
-* @param[in] - void *args - is empty
-* @return    - return NULL
+* @brief     This function is used by consumer thread to print the values from the queue and clear it.
+* @param[in] args - is empty
+* @return    return NULL
 */
 void *on_consume(void *args) 
 {
@@ -267,7 +301,7 @@ void *on_consume(void *args)
 }
 
 /** 
-* @brief - This function starts the consumer thread.
+* @brief This function starts the consumer thread.
 */
 void start_engine() 
 {
@@ -275,7 +309,7 @@ void start_engine()
 }
 
 /** 
-* @brief - This function stops the consumer thread.
+* @brief This function stops the consumer thread.
 */
 void stop_engine() 
 {
@@ -283,7 +317,7 @@ void stop_engine()
 }
 
 /**
-* @brief - This function deallocate the memory of the queue
+* @brief This function deallocate the memory of the queue
 */
 void destroy_engine() 
 {
@@ -301,9 +335,7 @@ void destroy_engine()
 int main() 
 {
     int i = 0;
-
     pthread_t producers[THREADS];
-
     initializeEngine();
 
     if (NULL != queue) 
@@ -319,7 +351,6 @@ int main()
         }
 
         start_engine();
-
         stop_engine();
         destroy_engine();
     }
