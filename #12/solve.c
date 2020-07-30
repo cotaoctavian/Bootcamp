@@ -1,11 +1,17 @@
+/**************************************************************
+ *                      INCLUDES                              *
+ **************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
 
-#define MAP_SIZE 500
+/**************************************************************
+ *                      DEFINES                               *
+ **************************************************************/
 
-uint32_t pos = 0;
+#define MAP_SIZE 500
 
 typedef struct _Map
 {
@@ -13,10 +19,28 @@ typedef struct _Map
     int value;  
 } Map;
 
+/**************************************************************
+ *                 GLOBAL VARIABLES                           *
+ **************************************************************/
+
+uint32_t pos = 0;
+
+/**************************************************************
+ *                FUNCTIONS DECLARATION                       *
+ **************************************************************/
+
+void add_key(Map map[], char *key);
+void sort_items_by_apparitions(Map map[]);
+void print_items(Map map[]);
+
+/**************************************************************
+ *                FUNCTIONS DEFINITION                        *
+ **************************************************************/
+
 /**
-* @brief     - Search for a key, if it's not found, then add it on the map, else increment the value of it.
-* @param[in] - Map map[] stores all the pairs of the type <key, value>
-*            - char *key is the key that we are looking for in the map
+* @brief     Search for a key, if it's not found, then add it on the map, else increment the value of it.
+* @param[in] map - stores all the pairs of the type <key, value>
+* @param[in] key - is the key that we are looking for in the map
 */
 void add_key(Map map[], char *key) 
 {
@@ -41,8 +65,8 @@ void add_key(Map map[], char *key)
 }
 
 /**
-* @brief     - Sorts the items from the map based on the value of the keys.
-* @param[in] - Map map[] - is the map that is going to be sorted
+* @brief     Sorts the items from the map based on the value of the keys.
+* @param[in] map - is the map that is going to be sorted
 */
 void sort_items_by_apparitions(Map map[])
 {
@@ -68,7 +92,7 @@ void sort_items_by_apparitions(Map map[])
 }
 
 /** 
-* @brief - This functions prints out all the pairs from the map
+* @brief This functions prints out all the pairs from the map
 */
 void print_items(Map map[])
 {
@@ -79,7 +103,6 @@ void print_items(Map map[])
         printf("Apparitions: %d ---> Word: %s\n", map[i].value, map[i].key);
     }
 }
-
 
 int main() 
 {
