@@ -18,6 +18,10 @@
     printf("%d %s %d\n", debug_level, __FILE__, __LINE__); \
     printf((f_), __VA_ARGS__)
     
+/**************************************************************
+ *                FUNCTIONS DEFINITION                        *
+ **************************************************************/
+
 int main() 
 {
     TM_PRINTF(5, "My value is %d\n", 5);
