@@ -1,15 +1,29 @@
+/**************************************************************
+ *                      INCLUDES                              *
+ **************************************************************/
+
 #include <stdio.h>
 #include <ctype.h>
 #include <stdint.h>
 #include <string.h>
 
+/**************************************************************
+ *                FUNCTIONS DECLARATION                       *
+ **************************************************************/
+
+uint32_t get_value(char *buffer, int offset, int buffer_size, uint32_t *result);
+
+/**************************************************************
+ *                FUNCTIONS DEFINITION                        *
+ **************************************************************/
+
 /** 
- * @brief         - Function used to get the first number from a string
- * @param[in]     - *buffer - is the string that is going to be parsed
- *                - offset - is the index from where you start searching for a number
- *                - buffer_size - is the parameter that specifies the size of the string
- * @param[in/out] - result - is the converted integer from the buffer's bytes.
- * @return        - returns the a number if exists in string, else is going to return an error based on a specific case
+ * @brief         Function used to get the first number from a string
+ * @param[in]     buffer      - is the string that is going to be parsed
+ * @param[in]     offset      - is the index from where you start searching for a number
+ * @param[in]     buffer_size - is the parameter that specifies the size of the string
+ * @param[in/out] result      - is the converted integer from the buffer's bytes.
+ * @return        returns the a number if exists in string, else is going to return an error based on a specific case
 */
 uint32_t get_value(char *buffer, int offset, int buffer_size, uint32_t *result) 
 {   
