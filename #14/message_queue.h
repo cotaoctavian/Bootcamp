@@ -40,10 +40,10 @@ char words[256][8] = {"test", "haha", "nu", "queue", "salut", "idk", "buna", "pa
 MessageQueue *initialize_message_queue(void);
 void deinitialize_message_queue(MessageQueue *queue);
 void *send_message(void *args);
-void *reiceive_message(void *args);
+void *receive_message(void *args);
 void push(MessageQueue *queue, char *message);
 void set_signal(bool value);
-bool get_signal();
+bool get_signal(void);
 int is_empty(MessageQueue *queue);
 int is_full(MessageQueue *queue);
 char *pop(MessageQueue *queue);
@@ -255,7 +255,7 @@ void set_signal(bool value)
  * @brief  This function returns the state of the signal
  * @return true, otherwise false
  */
-bool get_signal()
+bool get_signal(void)
 {   
     bool local_signal = false;
     
