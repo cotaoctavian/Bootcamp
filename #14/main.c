@@ -30,8 +30,8 @@ static void *onConsume(void *args);
 
 /**
  * @brief     This function is used by the producer thread to send messages.
- * @param[in] Parameters used to pass the queue
- * @return    Returns null
+ * @param[in] args - Parameter used to pass the queue
+ * @return    null
  */
 static void *onProduce(void *args) 
 {   
@@ -40,8 +40,12 @@ static void *onProduce(void *args)
     while (true)
     {   
         send_message(queue, words[rand() % 7]);
+        send_message(queue, words[rand() % 7]);
+        send_message(queue, words[rand() % 7]);
 
         sleep(0.2);
+
+        send_message(queue, words[rand() % 7]);
     }
 
     return NULL;
@@ -49,8 +53,8 @@ static void *onProduce(void *args)
 
 /**
  * @brief     This function is used by the consumer thread to get the messages.
- * @param[in] Parameters used to pass the queue
- * @return    Returns null
+ * @param[in] args - Parameters used to pass the queue
+ * @return    null
  */
 static void *onConsume(void *args)
 {
@@ -58,7 +62,14 @@ static void *onConsume(void *args)
     
     while (true)
     {
-        receive_message(queue);
+        char response[256] = {0};
+
+        strcpy(response, receive_message(queue));
+        printf("Consumer poped from queue: %s\n", response);
+
+        strcpy(response, "");
+        strcpy(response, receive_message(queue));
+        printf("Consumer poped from queue: %s\n", response);
 
         sleep(0.2);
     }
