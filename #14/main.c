@@ -21,8 +21,8 @@ static char words[256][8] = {"unu", "doi", "trei", "patru", "cinci", "sase", "sa
  *              STATIC FUNCTIONS DECLARATION                  *
  **************************************************************/
 
-static void *onProduce(void *args);
-static void *onConsume(void *args);
+static void *on_produce(void *args);
+static void *on_consume(void *args);
 
 /**************************************************************
  *               STATIC FUNCTIONS DEFINITION                  *
@@ -33,7 +33,7 @@ static void *onConsume(void *args);
  * @param[in] args - Parameter used to pass the queue
  * @return    null
  */
-static void *onProduce(void *args) 
+static void *on_produce(void *args) 
 {   
     MessageQueue *queue = (MessageQueue *) args;
 
@@ -56,7 +56,7 @@ static void *onProduce(void *args)
  * @param[in] args - Parameters used to pass the queue
  * @return    null
  */
-static void *onConsume(void *args)
+static void *on_consume(void *args)
 {
     MessageQueue *queue = (MessageQueue *) args;
     
@@ -85,10 +85,10 @@ int main()
     pthread_t consumer;
 
     /* Create producer thread */
-    pthread_create(&producer, NULL, onProduce, queue);
+    pthread_create(&producer, NULL, on_produce, queue);
 
     /* Create consumer thread */
-    pthread_create(&consumer, NULL, onConsume, queue);
+    pthread_create(&consumer, NULL, on_consume, queue);
 
     /* Terminate threads */
     pthread_join(producer, NULL);
