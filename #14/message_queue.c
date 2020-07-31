@@ -30,8 +30,8 @@ static char *pop(MessageQueue *queue);
 
 /** 
 * @brief     Check if the queue is empty.
-* @param[in] queue - is the queue
-* @return    returns false/true
+* @param[in] queue - is the queue.
+* @return    Returns false or true.
 */
 static int is_empty(MessageQueue *queue) 
 {
@@ -52,7 +52,7 @@ static int is_empty(MessageQueue *queue)
 /**
 * @brief     Check if the queue is full.
 * @param[in] queue - is the queue
-* @return    returns false/true
+* @return    Returns true or false.
 */
 static int is_full(MessageQueue *queue) 
 {
@@ -71,9 +71,9 @@ static int is_full(MessageQueue *queue)
 }
 
 /** 
-* @brief         Add an element to queue.
-* @param[in]     message - is the item that is going to be added into the queue
+* @brief         Adds an element to the queue.
 * @param[in/out] queue   - is the modified queue
+* @param[in]     message - is the item that is going to be added into the queue
 */ 
 static void push(MessageQueue *queue, char *message) 
 {
@@ -81,7 +81,7 @@ static void push(MessageQueue *queue, char *message)
     {
         if (1 == is_full(queue)) 
         {
-            printf("The queue is full.");
+            printf("The queue is full.\n");
         }
         else 
         {
@@ -90,11 +90,15 @@ static void push(MessageQueue *queue, char *message)
             queue->message[queue->rear] = strdup(message);
 
             queue->size++; 
+
+            printf("Producer pushed to queue: %s\n", message);
+
+            free(message);
         }
     }
     else 
     {
-        printf("The queue is NULL.");
+        printf("The queue is NULL.\n");
     }
 } 
 
@@ -124,7 +128,7 @@ static char *pop(MessageQueue *queue)
     }
     else 
     {
-        printf("The queue is NULL.");
+        printf("The queue is NULL.\n");
     }
 
     return result;
@@ -135,8 +139,8 @@ static char *pop(MessageQueue *queue)
  **************************************************************/
 
 /** 
-* @brief     Initialize a new queue. 
-* @return    returns the initialized queue
+* @brief  Initialize a new queue. 
+* @return returns the initialized queue
 */
 MessageQueue *initialize_message_queue(void) 
 {
@@ -153,8 +157,8 @@ MessageQueue *initialize_message_queue(void)
 }
 
 /**
- * @brief     Deinitialize the stack.
- * @param[in] stack - is the stack that is going to be deinitialized
+ * @brief     Deinitialize the queue.
+ * @param[in] queue - is the queue that is going to be deinitialized
  */
 void deinitialize_message_queue(MessageQueue *queue)
 {
@@ -176,32 +180,32 @@ void deinitialize_message_queue(MessageQueue *queue)
 }
 
 /**
-* @brief     This is the producer function that adds elements to the queue
-* @param[in] args - stores the value that is decremented to add n values to the queue
-* @return    returns NULL
+* @brief     Function that adds an element to the queue.
+* @param[in] queue - is the queue that is going to be modified.
+* @param[in] word  - is the string that is going to be added into the queue.
 */
 void send_message(MessageQueue *queue, char word[]) 
 {
     pthread_mutex_lock(&queue->lock);
 
     push(queue, word);
-    printf("Producer pushed to queue: %s\n", word);
 
     pthread_mutex_unlock(&queue->lock);
 }
 
 /** 
-* @brief  Consumer function that reads the elements from the queue and clears it
-* @return returns NULL
+* @brief  Function that removes the top element from the queue.
+* @return Returns the string removed from the queue.
 */
-void receive_message(MessageQueue *queue) 
+char *receive_message(MessageQueue *queue) 
 {
-    char message[256] = {0};
+    char *message = "";
 
     pthread_mutex_lock(&queue->lock);
  
-    strcpy(message, pop(queue));
-    printf("Consumer poped from queue: %s\n", message);
+    message = strdup(pop(queue));
     
     pthread_mutex_unlock(&queue->lock);
+
+    return message;
 }
