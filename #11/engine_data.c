@@ -235,8 +235,17 @@ void destroyEngine(void *engine)
     {   
         if (NULL != ((ENGINE_DATA *) engine)->queue) 
         {   
+            if (NULL != (((ENGINE_DATA *) engine)->queue->arr)) 
+            {
+                free(((ENGINE_DATA *) engine)->queue->arr);
+                ((ENGINE_DATA *) engine)->queue->arr = NULL;
+            }
+
             free(((ENGINE_DATA *) engine)->queue);
             ((ENGINE_DATA *) engine)->queue = NULL;
+
+            pthread_mutex_destroy(&((ENGINE_DATA *) engine)->lock);
+            pthread_mutex_destroy(&((ENGINE_DATA *) engine)->lock2);
         }
         else 
         {
