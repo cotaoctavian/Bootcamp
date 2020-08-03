@@ -9,7 +9,7 @@
 /** 
  * @brief This function allocates memory to ENGINE_DATA struct.
  */
-void *initializeEngine();
+void *initializeEngine(void);
 
 /** 
  * @brief This function starts the consumer thread.
