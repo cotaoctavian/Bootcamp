@@ -198,7 +198,7 @@ static bool get_run(ENGINE_DATA *engine)
 /** 
  * @brief This function allocates memory to ENGINE_DATA struct.
  */
-void *initializeEngine()
+void *initializeEngine(void)
 {
     ENGINE_DATA *engine = (ENGINE_DATA *) malloc (sizeof(ENGINE_DATA));
 
