@@ -345,6 +345,7 @@ int main() {
                     printf("%s\n", "The content of the file is:");
 
                     char *res = get_text_content(file);
+
                     if (0 == strcmp(res, "NO")) 
                     {
                         printf("Something went wrong..\n");
@@ -546,7 +547,8 @@ int main() {
                         } 
                         else 
                         {
-                            int i = 0, k = 0;
+                            int i = 0;
+                            int k = 0;
                             char curr_text[256] = {0};
 
                             for (i = 0; prev_text[i] != '\0'; i++) 
