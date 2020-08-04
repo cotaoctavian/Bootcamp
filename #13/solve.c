@@ -229,7 +229,7 @@ static bool is_number(char *str)
 */
 static char *get_text_content(FILE *file) 
 {   
-    char *result = (char *) malloc (256);
+    char *result;
 
     if (NULL != file) 
     {
@@ -252,11 +252,11 @@ static char *get_text_content(FILE *file)
         /* Copy all the text into the buffer */
         fread(text, sizeof(char), numbytes, file);
 
-        strcpy(result, text);
+        result = strdup(text);
     }
     else 
     {
-        strcpy(result, "NO");
+        result = strdup("NO");
     }
 
     return result;
