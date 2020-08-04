@@ -61,11 +61,11 @@ static Stack *init(unsigned int size)
 */
 static bool is_empty(Stack *stack)
 {
-    int result = 0;
+    bool result = false;
 
     if (NULL != stack) 
     {
-        result = stack->top == -1;
+        result = stack->top == -1 ? true : false;
     }
     else 
     {
@@ -83,11 +83,11 @@ static bool is_empty(Stack *stack)
 */
 static bool is_full(Stack *stack) 
 {
-    int result = 0;
+    bool result = false;
 
     if (NULL != stack) 
     {
-        result = stack->top == (stack->size - 1);
+        result = stack->top == (stack->size - 1) ? true : false;
     }
     else 
     {   
@@ -178,7 +178,7 @@ static void deinitialize(Stack *stack)
             stack->current_data = NULL;
         }
 
-        if(NULL != stack->previous_data)
+        if (NULL != stack->previous_data)
         {
             free(stack->previous_data);
             stack->previous_data = NULL;
