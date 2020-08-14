@@ -77,6 +77,7 @@ int main(int argc, char **argv)
     else 
     {
         int i = 1;
+        
         for (i = 1; i < argc; i++)
         {
             if (0 == strcmp(argv[i], "-c"))
