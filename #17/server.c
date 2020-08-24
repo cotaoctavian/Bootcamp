@@ -28,7 +28,17 @@ DBusError dbus_error;
  *              STATIC FUNCTIONS DECLARATION                  *
  **************************************************************/
 
+/**
+ * @brief     This function prints out the raised error.
+ * @param[in] str - Message for the raise error.
+ */
 static void print_dbus_error (char *str);
+
+/**
+ * @brief     This functions verifies if a string is an integer.
+ * @param[in] ptr - is the string that is going to be checked if it's an integer or not.
+ * @return    true / false
+ */
 static bool isinteger (char *ptr);
 
 /**************************************************************
