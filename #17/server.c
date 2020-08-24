@@ -133,7 +133,7 @@ int main (int argc, char **argv)
                         
                             if (0 == error)
                             {
-                                if (isinteger (str1))
+                                if (true == isinteger (str1))
                                 {
                                     i = atol (str1);
                                 }
@@ -145,7 +145,7 @@ int main (int argc, char **argv)
 
                             if (0 == error)
                             {
-                                if (isinteger (str2))
+                                if (true == isinteger (str2))
                                 {
                                     j = atol (str2);
                                 }
@@ -192,7 +192,7 @@ int main (int argc, char **argv)
                                     }
                                 }
                             }
-                            else // There was an error
+                            else
                             {
                                 DBusMessage *dbus_error_msg;
                                 char error_msg [] = "Error in input";
@@ -204,7 +204,7 @@ int main (int argc, char **argv)
                                 }
                                 else
                                 {
-                                    if (!dbus_connection_send (conn, dbus_error_msg, NULL)) 
+                                    if (0 == dbus_connection_send (conn, dbus_error_msg, NULL)) 
                                     {
                                         fprintf (stderr, "Error in dbus_connection_send\n");
                                     }
