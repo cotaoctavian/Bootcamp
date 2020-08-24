@@ -36,6 +36,10 @@ static void print_dbus_error (char *str);
  *               STATIC FUNCTIONS DEFINITION                  *
  **************************************************************/
 
+/**
+ * @brief     This function prints out the raised error.
+ * @param[in] str - Message for the raise error.
+ */
 static void print_dbus_error (char *str) 
 {
     fprintf (stderr, "%s: %s\n", str, dbus_error.message);
