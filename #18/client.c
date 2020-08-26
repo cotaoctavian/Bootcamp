@@ -29,6 +29,8 @@
 
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static bool run = true;
+static time_t my_time;
+static struct tm *timeinfo;
 
 /**************************************************************
  *                FUNCTIONS DECLARATION                       *
@@ -70,12 +72,18 @@ static bool check_server_status(int server_sock)
 
     double seconds = (double) (end - start) / CLOCKS_PER_SEC;
 
-    printf("\n[Client] Elapsed time: %f seconds.\n", seconds);
+    printf("\n[Client] Elapsed time for checking if the server is working: %f seconds.\n", seconds);
 
     /* Check the exit case. */
     if (0 == strcmp(message, "Pong") && 5 > (int) seconds) 
     {   
-        printf("[Client] Message received from the server: %s\n", message); 
+        time(&my_time);
+        timeinfo = localtime(&my_time);
+
+        /* print message which contains the client contents */
+        printf("[%02d:%02d:%02d][Client] Message received from the server: %s\n\n", 
+        timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, message);
+
         response = true;
     }  
     else
@@ -105,7 +113,7 @@ static void *client_server_communication(void *args)
 
         pthread_mutex_lock(&lock);
 
-        strcpy(message, "Hello, my client!");
+        strcpy(message, "Hello, my server!");
 
         write(*server_sock, message, sizeof(message)); 
 
@@ -117,7 +125,13 @@ static void *client_server_communication(void *args)
 
         if (0 < strlen(message))
         {
-            printf("[Client] Message received from the server: %s\n", message);
+            time(&my_time);
+            timeinfo = localtime(&my_time);
+
+            /* print message which contains the client contents */
+            printf("[%02d:%02d:%02d][Client] Message received from the server: %s\n", 
+            timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, message);
+
             sleep(1);
         }
         else 
@@ -180,9 +194,9 @@ int main(void)
     else 
     {
         /* assign IP, PORT */ 
-        server.sin_family = AF_INET; 
+        server.sin_family      = AF_INET; 
         server.sin_addr.s_addr = inet_addr("127.0.0.1"); 
-        server.sin_port = htons(PORT); 
+        server.sin_port        = htons(PORT); 
 
         /* Connect to the server */
         if (-1 == connect(sock, (struct sockaddr *) &server, sizeof(struct sockaddr)))

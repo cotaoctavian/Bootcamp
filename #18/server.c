@@ -28,6 +28,8 @@
 
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 static bool run = true;
+static time_t my_time;
+static struct tm *timeinfo;
 
 /**************************************************************
  *                FUNCTIONS DECLARATION                       *
@@ -64,12 +66,17 @@ static bool check_client_status(int client)
 
     double seconds = (double) (end - start) / CLOCKS_PER_SEC;
 
-    printf("\n[Server] Elapsed time: %f seconds.\n", seconds);
+    printf("\n[Server] Elapsed time for checking if the client is working: %f seconds.\n", seconds);
 
     if (0 == strcmp(message, "Ping") && 5 > (int) seconds)
-    {
+    {   
+
+        time(&my_time);
+        timeinfo = localtime(&my_time);
+
         /* print message which contains the client contents */
-        printf("[Server] Message received from the client: %s\n", message);
+        printf("[%02d:%02d:%02d][Server] Message received from the client: %s\n\n", 
+        timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, message);
 
         bzero(message, 256);
         strcpy(message, "Pong");
@@ -109,7 +116,12 @@ static void *server_client_communication(void *args)
 
         if (0 < strlen(message))
         {
-            printf("[Server] Message received from the client: %s\n", message);
+            time(&my_time);
+            timeinfo = localtime(&my_time);
+
+            /* print message which contains the client contents */
+            printf("[%02d:%02d:%02d][Server] Message received from the client: %s\n", 
+            timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, message);
         }
         else 
         {
@@ -166,10 +178,10 @@ static void *test_ping(void *args)
 
 int main(void)
 {
-    int sock          = 0; 
-    int optval        = 1;
-    int client        = 0;
-    int len           = 0;
+    int optval = 1;
+    int client = 0;
+    int sock   = 0; 
+    int len    = 0;
 
     struct sockaddr_in server;
     struct sockaddr_in from;
@@ -189,9 +201,9 @@ int main(void)
         
         bzero(&server, sizeof(server));
 
-        server.sin_family = AF_INET;
+        server.sin_family      = AF_INET;
         server.sin_addr.s_addr = htonl(INADDR_ANY);
-        server.sin_port = htons(PORT);
+        server.sin_port        = htons(PORT);
 
         if (-1 == bind(sock, (struct sockaddr *) &server, sizeof(struct sockaddr)))
         {
