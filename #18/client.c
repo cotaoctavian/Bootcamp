@@ -24,53 +24,105 @@
 #define PORT 8080 
 
 /**************************************************************
+ *                      GLOBAL VARIABLES                      *
+ **************************************************************/
+
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
+/**************************************************************
  *                FUNCTIONS DECLARATION                       *
  **************************************************************/
 
-static void *check_server_status(void *args);
+static bool check_server_status(int server_sock);
+static void *test_pong(void *args);
+static void *client_server_communication(void *args);
 
 /**************************************************************
  *                FUNCTIONS DEFINITION                        *
  **************************************************************/
 
-static void *check_server_status(void *args)
-{   
+/**
+ * @brief     This function checks if the server is still working
+ * @param[in] args - stores the server's socket
+ * @return    NULL
+ */
+static bool check_server_status(int server_sock)
+{      
+    bool response     = false;
     char message[256] = {0};
-    int *server_sock = (int *) args;
     clock_t start, end;
+
+    bzero(message, sizeof(message)); 
+
+    strcpy(message, "Ping");
+
+    /* Send it to the server. */
+    write(server_sock, message, sizeof(message)); 
+    bzero(message, sizeof(message)); 
+    
+    start = clock();
+
+    /* Read the message from the server. */
+    read(server_sock, message, sizeof(message)); 
+
+    end = clock();
+
+    double seconds = (double) (end - start) / CLOCKS_PER_SEC;
+
+    printf("\n[Client] Elapsed time: %f seconds.\n", seconds);
+
+    /* Check the exit case. */
+    if (0 == strcmp(message, "Pong") && 5 > (int) seconds) 
+    {   
+        printf("[Client] Message received from the server: %s\n", message); 
+        response = true;
+    }  
+    else
+    {
+        printf("[Client] Server is not working properly..\n"); 
+        response = false; 
+    }
+
+    return response;
+}
+
+/**
+ * @brief     This function communicates with the server.
+ * @param[in] args - stores the server's socket
+ * @return    NULL
+ */
+static void *client_server_communication(void *args)
+{   
+    int k             = 0;
+    char message[256] = {0};
+    int *server_sock  = (int *) args;
 
     while (true)
     {
-        bzero(message, sizeof(message)); 
+        /* Send other messages than ping pong */
+        bzero(message, sizeof(message));
 
-        strcpy(message, "Ping");
-
-        /* Send it to the server. */
-        write(*server_sock, message, sizeof(message)); 
-        bzero(message, sizeof(message)); 
+        //printf("\n[Client] Send a message to the server: ");
         
-        start = clock();
+        // k = 0;
 
-        /* Read the message from the server. */
-        read(*server_sock, message, sizeof(message)); 
+        // while ('\n' != (message[k++] = getchar()));
+        
+        pthread_mutex_lock(&lock);
 
-        end = clock();
+        strcpy(message, "Hello, my client!");
 
-        double seconds = (double) (end - start) / CLOCKS_PER_SEC;
+        write(*server_sock, message, sizeof(message)); 
 
-        printf("[Client] Elapsed time: %f seconds.\n", seconds);
+        bzero (message, sizeof(message));
 
-        /* Check the exit case. */
-        if (0 == strcmp(message, "Pong") && 5 > (int) seconds) 
-        {   
-            printf("[Client] Message received from the server: %s\n", message); 
-            sleep(5);
-        }  
-        else
-        {
-            printf("[Client] Server is not working properly..\n"); 
-            break; 
-        }
+        read(*server_sock, message, sizeof(message));
+
+        pthread_mutex_unlock(&lock);
+
+        printf("[Client] Message received from the server: %s\n", message);
+
+        sleep(1);
     }
 
     close(*server_sock);
@@ -78,10 +130,43 @@ static void *check_server_status(void *args)
     return NULL;
 }
 
-int main(void) 
+
+/**
+ * @brief     This function calls the function that checks if the server is still working.
+ * @param[in] args - stores the server's socket
+ * @return    NULL
+ */
+static void *test_pong(void *args) 
 {
+    int *server   = (int *) args;
+    bool response = false;
+
+    while (true)
+    {
+        pthread_mutex_lock(&lock);
+
+        response = check_server_status(*server);
+
+        pthread_mutex_unlock(&lock);
+
+        if (true == response) 
+        {
+            sleep(5);
+        }
+        else 
+        {
+            break;
+        }
+    }
+
+    return NULL;
+}
+
+int main(void) 
+{   
     int sock = 0;
     pthread_t client_thread;
+    pthread_t communication_thread;
 
     struct sockaddr_in server;
 
@@ -107,9 +192,13 @@ int main(void)
         {
             printf("[Client] Connected to the server.\n");
 
-            pthread_create(&client_thread, NULL, check_server_status, &sock);
+            pthread_create(&client_thread, NULL, test_pong, &sock);
+
+            pthread_create(&communication_thread, NULL, client_server_communication, &sock);
 
             pthread_join(client_thread, NULL);
+
+            pthread_join(communication_thread, NULL);
         }
     }
 
