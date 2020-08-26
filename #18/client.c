@@ -98,7 +98,7 @@ static void *client_server_communication(void *args)
     char message[256] = {0};
     int *server_sock  = (int *) args;
 
-    while (true)
+    while (true == run)
     {
         /* Send other messages than ping pong */
         bzero(message, sizeof(message));
@@ -142,7 +142,7 @@ static void *test_pong(void *args)
 {
     int *server = (int *) args;
 
-    while (run)
+    while (true == run)
     {
         pthread_mutex_lock(&lock);
 

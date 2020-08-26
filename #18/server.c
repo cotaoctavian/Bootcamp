@@ -99,7 +99,7 @@ static void *server_client_communication(void *args)
     int *client       = (int *) args;
     char message[256] = {0};
 
-    while (run)
+    while (true == run)
     {
         bzero(message, sizeof(message));
 
@@ -143,7 +143,7 @@ static void *test_ping(void *args)
 {   
     int *client = (int *) args;
 
-    while (run)
+    while (true == run)
     {
         pthread_mutex_lock(&lock);
 
