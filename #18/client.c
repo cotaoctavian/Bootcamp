@@ -28,6 +28,7 @@
  **************************************************************/
 
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+static bool run = true;
 
 /**************************************************************
  *                FUNCTIONS DECLARATION                       *
@@ -102,12 +103,6 @@ static void *client_server_communication(void *args)
         /* Send other messages than ping pong */
         bzero(message, sizeof(message));
 
-        //printf("\n[Client] Send a message to the server: ");
-        
-        // k = 0;
-
-        // while ('\n' != (message[k++] = getchar()));
-        
         pthread_mutex_lock(&lock);
 
         strcpy(message, "Hello, my client!");
@@ -120,16 +115,23 @@ static void *client_server_communication(void *args)
 
         pthread_mutex_unlock(&lock);
 
-        printf("[Client] Message received from the server: %s\n", message);
-
-        sleep(1);
+        if (0 < strlen(message))
+        {
+            printf("[Client] Message received from the server: %s\n", message);
+            sleep(1);
+        }
+        else 
+        {
+            printf("[Client] Didn't receive any message from the server..\n");
+            run = false;
+            break;
+        }
     }
 
     close(*server_sock);
 
     return NULL;
 }
-
 
 /**
  * @brief     This function calls the function that checks if the server is still working.
@@ -138,18 +140,17 @@ static void *client_server_communication(void *args)
  */
 static void *test_pong(void *args) 
 {
-    int *server   = (int *) args;
-    bool response = false;
+    int *server = (int *) args;
 
-    while (true)
+    while (run)
     {
         pthread_mutex_lock(&lock);
 
-        response = check_server_status(*server);
+        run = check_server_status(*server);
 
         pthread_mutex_unlock(&lock);
 
-        if (true == response) 
+        if (true == run) 
         {
             sleep(5);
         }

@@ -27,6 +27,7 @@
  **************************************************************/
 
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+static bool run = true;
 
 /**************************************************************
  *                FUNCTIONS DECLARATION                       *
@@ -98,7 +99,7 @@ static void *server_client_communication(void *args)
     int *client       = (int *) args;
     char message[256] = {0};
 
-    while (true)
+    while (run)
     {
         bzero(message, sizeof(message));
 
@@ -106,15 +107,18 @@ static void *server_client_communication(void *args)
 
         read(*client, message, sizeof(message)); 
 
-        printf("[Server] Message received from the client: %s\n", message);
+        if (0 < strlen(message))
+        {
+            printf("[Server] Message received from the client: %s\n", message);
+        }
+        else 
+        {
+            printf("[Server] Didn't receive any message from the client..\n");
+            run = false;
+            break;
+        }
 
         bzero(message, sizeof(message));
-
-        //printf("\n[Server] Send a message to the client: ");
-
-        /// k = 0;
-
-        // while ('\n' != (message[k++] = getchar()));
 
         strcpy(message, "Hello, my server!");
 
@@ -123,7 +127,6 @@ static void *server_client_communication(void *args)
         pthread_mutex_unlock(&lock);
 
         sleep(1);
-
     }
 
     close(*client);
@@ -138,18 +141,17 @@ static void *server_client_communication(void *args)
  */
 static void *test_ping(void *args) 
 {   
-    int *client   = (int *) args;
-    bool response = false;
+    int *client = (int *) args;
 
-    while (true)
+    while (run)
     {
         pthread_mutex_lock(&lock);
 
-        response = check_client_status(*client);
+        run = check_client_status(*client);
 
         pthread_mutex_unlock(&lock);
 
-        if (true == response) 
+        if (true == run) 
         {
             sleep(5);
         }
