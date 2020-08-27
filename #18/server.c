@@ -59,6 +59,8 @@ static bool check_client_status(int client)
 
     start = clock();
 
+    pthread_mutex_lock(&lock);
+
     /* read the message from client and copy it in message */
     read(client, message, sizeof(message)); 
 
@@ -92,6 +94,9 @@ static bool check_client_status(int client)
         response = false;
     }
 
+    pthread_mutex_unlock(&lock);
+
+
     return response;
 }
 
@@ -102,7 +107,6 @@ static bool check_client_status(int client)
  */
 static void *server_client_communication(void *args)
 {   
-    int k             = 0;
     int *client       = (int *) args;
     char message[256] = {0};
 
@@ -157,11 +161,7 @@ static void *test_ping(void *args)
 
     while (true == run)
     {
-        pthread_mutex_lock(&lock);
-
         run = check_client_status(*client);
-
-        pthread_mutex_unlock(&lock);
 
         if (true == run) 
         {
