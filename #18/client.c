@@ -59,6 +59,8 @@ static bool check_server_status(int server_sock)
 
     strcpy(message, "Ping");
 
+    pthread_mutex_lock(&lock);
+
     /* Send it to the server. */
     write(server_sock, message, sizeof(message)); 
     bzero(message, sizeof(message)); 
@@ -67,6 +69,8 @@ static bool check_server_status(int server_sock)
 
     /* Read the message from the server. */
     read(server_sock, message, sizeof(message)); 
+
+    pthread_mutex_unlock(&lock);
 
     end = clock();
 
@@ -102,7 +106,6 @@ static bool check_server_status(int server_sock)
  */
 static void *client_server_communication(void *args)
 {   
-    int k             = 0;
     char message[256] = {0};
     int *server_sock  = (int *) args;
 
@@ -158,11 +161,7 @@ static void *test_pong(void *args)
 
     while (true == run)
     {
-        pthread_mutex_lock(&lock);
-
         run = check_server_status(*server);
-
-        pthread_mutex_unlock(&lock);
 
         if (true == run) 
         {
