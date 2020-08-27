@@ -129,14 +129,15 @@ static void *server_client_communication(void *args)
         }
         else 
         {
-            printf("[Server] Didn't receive any message from the client..\n");
+            printf("\n[Server] Didn't receive any message from the client..\n");
+            printf("[Server] Establishing the connection with the client..\n\n");
             run = false;
             break;
         }
 
         bzero(message, sizeof(message));
 
-        strcpy(message, "Hello, my server!");
+        strcpy(message, "Hello, my client!");
 
         write(*client, message, sizeof(message));
 
@@ -173,6 +174,8 @@ static void *test_ping(void *args)
         }
     }
 
+    close(*client);
+
     return NULL;
 }
 
@@ -182,6 +185,7 @@ int main(void)
     int client = 0;
     int sock   = 0; 
     int len    = 0;
+    pid_t childpid;
 
     struct sockaddr_in server;
     struct sockaddr_in from;
@@ -216,28 +220,41 @@ int main(void)
                 perror("[Server] Something went wrong while listening.. \n");
             }
             else 
-            {
-                len = sizeof (from);
-                bzero (&from, sizeof (from));
-
-                client = accept(sock, (struct sockaddr *) &from, &len);
-
-                if (0 > client)
+            {   
+                while (true)
                 {
-                    perror("[Server] Error raised while accepting the connection.\n");
-                }
-                else 
-                {
-                    printf("[Server] The client connected to the server.\n");
-                    fflush (stdout);
+                    len = sizeof (from);
+                    bzero (&from, sizeof (from));
 
-                    pthread_create(&server_thread, NULL, test_ping, &client);
+                    if (false == run)
+                    {
+                        run = true;
+                        system("x-terminal-emulator -e \"/home/uic84863/GIT/Bootcamp/#18/client\"");
+                    }
 
-                    pthread_create(&communication_thread, NULL, server_client_communication, &client);
 
-                    pthread_join(server_thread, NULL);
+                    client = accept(sock, (struct sockaddr *) &from, &len);
 
-                    pthread_join(communication_thread, NULL);
+                    if (0 > client)
+                    {
+                        perror("[Server] Error raised while accepting the connection.\n");
+                    }
+                    else 
+                    {
+                        if(0 == (childpid = fork()))
+                        {
+                            printf("[Server] The client connected to the server.\n");
+                            fflush (stdout);
+
+                            pthread_create(&server_thread, NULL, test_ping, &client);
+
+                            pthread_create(&communication_thread, NULL, server_client_communication, &client);
+
+                            pthread_join(server_thread, NULL);
+
+                            pthread_join(communication_thread, NULL);
+                        }
+                    }
                 }
             }
         }
