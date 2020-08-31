@@ -51,7 +51,11 @@ static void *get_acknowledge(void *args)
     {
         bzero(message, sizeof(message));
 
-        printf("[Server] Type the command you want to send: ");
+        time(&my_time);
+        timeinfo = localtime(&my_time);
+
+        printf("[%02d:%02d:%02d][Server] Type the command you want to send: ", 
+                timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
         
         int k = 0;
         while ('\n' != (message[k++] = getchar()));
@@ -72,7 +76,7 @@ static void *get_acknowledge(void *args)
         } 
         else if (0 == strcmp(message, "3"))
         {
-            strcpy(command, "START_INSTALATION");
+            strcpy(command, "START_INSTALLATION");
         }
         else if (0 == strcmp(message, "4"))
         {
@@ -87,8 +91,13 @@ static void *get_acknowledge(void *args)
             strcpy(command, "RESUME_INSTALLATION");
         }
         else 
-        {
-            printf("\n[Server] This command is not available. Try again.\n");
+        {   
+            time(&my_time);
+            timeinfo = localtime(&my_time);
+
+            printf("[%02d:%02d:%02d][Server] This command is not available. Try again.\n", 
+                timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+                
             response = false;
         }
 
@@ -100,13 +109,13 @@ static void *get_acknowledge(void *args)
 
             start = clock();
 
-            read(*client, message, sizeof(message)); 
+            int result = read(*client, message, sizeof(message)); 
 
             end = clock();
 
             double seconds = (double) (end - start) / CLOCKS_PER_SEC;
 
-            if (0 < strlen(message) && 5 > (int) seconds)
+            if (0 < result && 5 > (int) seconds)
             {
                 time(&my_time);
                 timeinfo = localtime(&my_time);
@@ -116,9 +125,19 @@ static void *get_acknowledge(void *args)
                 timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, message);
             }
             else 
-            {
-                printf("\n[Server] Didn't receive any message from the client in the specified time..\n");
-                printf("[Server] Try to reconnect again\n\n");
+            {   
+                time(&my_time);
+                timeinfo = localtime(&my_time);
+
+                printf("\n[%02d:%02d:%02d][Server] Didn't receive any message from the client in the specified time..\n", 
+                        timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+
+                time(&my_time);
+                timeinfo = localtime(&my_time);
+
+                printf("[%02d:%02d:%02d][Server] Try to reconnect again\n\n", 
+                      timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+
                 break;
             }
         }
@@ -133,7 +152,7 @@ int main(void)
 {
     int optval = 1;
     int client = 0;
-    int sock   = 0; 
+    int sock   = 0;
     int len    = 0;
     pid_t childpid;
     pthread_t server_thread;
@@ -194,7 +213,6 @@ int main(void)
                 }
             }
         }
-
     }
 
     return 0;
