@@ -29,6 +29,9 @@
 
 static time_t my_time;
 static struct tm *timeinfo;
+static enum {NONE = 0, VALIDATION_FAILED = 0, PACKAGE_CHECK_FAILED = 0, INSTALLATION_FAILED = 0, INSTALLATION_CANCELED = 0,
+            VALIDATION_SUCCESS = 1, PACKAGE_CHECK_SUCCESS = 2, INSTALLATION_STARTED = 3, INSTALLATION_PAUSED = 4, INSTALLATION_SUCCESS = 5};
+static int state_machine = NONE;
 
 /**************************************************************
  *                FUNCTIONS DECLARATION                       *
@@ -49,31 +52,107 @@ static void *get_acknowledge(void *args)
     {
         bzero (message, sizeof(message));
 
-        read(*server_sock, message, sizeof(message));
+        int response = read(*server_sock, message, sizeof(message));
 
-        if (0 < strlen(message))
+        if (-1 == response)
+        {   
+            time(&my_time);
+            timeinfo = localtime(&my_time);
+
+            printf("[%02d:%02d:%02d][Client] Didn't receive any message from the server..\n",
+                    timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
+            break;   
+        }
+        else 
         {
             time(&my_time);
             timeinfo = localtime(&my_time);
 
-            /* print message which contains the client contents */
             printf("[%02d:%02d:%02d][Client] Message received from the server: %s\n", 
-            timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, message);
+                    timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, message);
 
-            sleep(1);
+            if (0 == strcmp(message, "START_VALIDATION"))
+            {   
+                if (NONE == state_machine) 
+                {
+                    strcpy(message, "REQUEST_ACCEPTED");
+                    state_machine = VALIDATION_SUCCESS;
+                }
+                else 
+                {
+                    strcpy(message, "REQUEST_REJECTED");
+                    state_machine = VALIDATION_FAILED;
+                }
+
+            }
+            else if (0 == strcmp(message, "CHECK_PACKAGE"))
+            {
+                if (VALIDATION_SUCCESS == state_machine)
+                {
+                    strcpy(message, "REQUEST_ACCEPTED");
+                    state_machine = PACKAGE_CHECK_SUCCESS;
+                }
+                else 
+                {
+                    strcpy(message, "REQUEST_REJECTED");
+                    state_machine = PACKAGE_CHECK_FAILED;
+                }
+            }
+            else if (0 == strcmp(message, "START_INSTALLATION"))
+            {
+                if (PACKAGE_CHECK_SUCCESS == state_machine)
+                {
+                    strcpy(message, "REQUEST_ACCEPTED");
+                    state_machine = INSTALLATION_STARTED;
+                }
+                else 
+                {
+                    strcpy(message, "REQUEST_REJECTED");
+                    state_machine = INSTALLATION_FAILED;
+                }
+            }
+            else if (0 == strcmp(message, "STOP_INSTALLATION"))
+            {
+                if(INSTALLATION_STARTED == state_machine)
+                {
+                    strcpy(message, "REQUEST_ACCEPTED");
+                    state_machine = INSTALLATION_CANCELED;
+                }
+                else 
+                {
+                    strcpy(message, "REQUEST_REJECTED");
+                    state_machine = INSTALLATION_FAILED;
+                }
+            }
+            else if (0 == strcmp(message, "PAUSE_INSTALLATION"))
+            {
+                if (INSTALLATION_STARTED == state_machine)
+                {
+                    strcpy(message, "REQUEST_ACCEPTED");
+                    state_machine = INSTALLATION_PAUSED;
+                }
+                else
+                {
+                    strcpy(message, "REQUEST_REJECTED");
+                    state_machine = INSTALLATION_FAILED;
+                }
+            }
+            else if (0 == strcmp(message, "RESUME_INSTALLATION"))
+            {
+                if (INSTALLATION_PAUSED == state_machine)
+                {
+                    strcpy(message, "REQUEST_ACCEPTED");
+                    state_machine = INSTALLATION_STARTED;
+                }
+                else
+                {
+                    strcpy(message, "REQUEST_REJECTED");
+                    state_machine = INSTALLATION_FAILED;
+                }
+            }
+
+            write(*server_sock, message, sizeof(message)); 
         }
-        else 
-        {
-            printf("[Client] Didn't receive any message from the server..\n");
-            break;
-        }
-
-        /* Send other messages than ping pong */
-        bzero(message, sizeof(message));
-
-        strcpy(message, "I received the command!\n");
-
-        write(*server_sock, message, sizeof(message)); 
     }
 
     close(*server_sock);
@@ -110,7 +189,7 @@ int main(void)
         }
         else 
         {
-            printf("[Client] Connected to the server. \n");
+            printf("\n[Client] Connected to the server. \n");
 
             pthread_create(&client_thread, NULL, get_acknowledge, &sock);
             pthread_join(client_thread, NULL);
