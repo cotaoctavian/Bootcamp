@@ -54,7 +54,7 @@ static void *get_acknowledge(void *args)
 
         int response = read(*server_sock, message, sizeof(message));
 
-        if (-1 == response)
+        if (0 >= response)
         {   
             time(&my_time);
             timeinfo = localtime(&my_time);
@@ -71,17 +71,23 @@ static void *get_acknowledge(void *args)
             printf("[%02d:%02d:%02d][Client] Message received from the server: %s\n", 
                     timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec, message);
 
+
+            char state[256] = {0};
+            bool response = true;
+
             if (0 == strcmp(message, "START_VALIDATION"))
             {   
                 if (NONE == state_machine) 
                 {
                     strcpy(message, "REQUEST_ACCEPTED");
+                    strcpy(state, "The current machine's state is VALIDATION_SUCCESS");
                     state_machine = VALIDATION_SUCCESS;
                 }
                 else 
                 {
                     strcpy(message, "REQUEST_REJECTED");
                     state_machine = VALIDATION_FAILED;
+                    response = false;
                 }
 
             }
@@ -90,12 +96,14 @@ static void *get_acknowledge(void *args)
                 if (VALIDATION_SUCCESS == state_machine)
                 {
                     strcpy(message, "REQUEST_ACCEPTED");
+                    strcpy(state, "The current machine's state is CHECK_PACKAGE");
                     state_machine = PACKAGE_CHECK_SUCCESS;
                 }
                 else 
                 {
                     strcpy(message, "REQUEST_REJECTED");
                     state_machine = PACKAGE_CHECK_FAILED;
+                    response = false;
                 }
             }
             else if (0 == strcmp(message, "START_INSTALLATION"))
@@ -103,12 +111,14 @@ static void *get_acknowledge(void *args)
                 if (PACKAGE_CHECK_SUCCESS == state_machine)
                 {
                     strcpy(message, "REQUEST_ACCEPTED");
+                    strcpy(state, "The current machine's state is START_INSTALLATION");
                     state_machine = INSTALLATION_STARTED;
                 }
                 else 
                 {
                     strcpy(message, "REQUEST_REJECTED");
                     state_machine = INSTALLATION_FAILED;
+                    response = false;
                 }
             }
             else if (0 == strcmp(message, "STOP_INSTALLATION"))
@@ -116,12 +126,14 @@ static void *get_acknowledge(void *args)
                 if(INSTALLATION_STARTED == state_machine)
                 {
                     strcpy(message, "REQUEST_ACCEPTED");
+                    strcpy(state, "The current machine's state is STOP_INSTALLATION");
                     state_machine = INSTALLATION_CANCELED;
                 }
                 else 
                 {
                     strcpy(message, "REQUEST_REJECTED");
                     state_machine = INSTALLATION_FAILED;
+                    response = false;
                 }
             }
             else if (0 == strcmp(message, "PAUSE_INSTALLATION"))
@@ -129,12 +141,14 @@ static void *get_acknowledge(void *args)
                 if (INSTALLATION_STARTED == state_machine)
                 {
                     strcpy(message, "REQUEST_ACCEPTED");
+                    strcpy(state, "The current machine's state is PAUSE_INSTALLATION");
                     state_machine = INSTALLATION_PAUSED;
                 }
                 else
                 {
                     strcpy(message, "REQUEST_REJECTED");
                     state_machine = INSTALLATION_FAILED;
+                    response = false;
                 }
             }
             else if (0 == strcmp(message, "RESUME_INSTALLATION"))
@@ -142,16 +156,24 @@ static void *get_acknowledge(void *args)
                 if (INSTALLATION_PAUSED == state_machine)
                 {
                     strcpy(message, "REQUEST_ACCEPTED");
+                    strcpy(state, "The current machine's state is RESUME_INSTALLATION");
                     state_machine = INSTALLATION_STARTED;
                 }
                 else
                 {
                     strcpy(message, "REQUEST_REJECTED");
                     state_machine = INSTALLATION_FAILED;
+                    response = false;
                 }
             }
 
             write(*server_sock, message, sizeof(message)); 
+
+            if (true == response)
+            {
+                sleep(3);
+                write(*server_sock, state, sizeof(state));
+            }
         }
     }
 
