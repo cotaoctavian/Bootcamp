@@ -43,6 +43,11 @@ static void *get_acknowledge(void *args);
  *                FUNCTIONS DEFINITION                        *
  **************************************************************/
 
+/**
+ * @brief     This function checks if the message sent from server is a valid command or not and sends a message back to the server.
+ * @param[in] args - Server's socket.
+ * @return    NULL
+ */
 static void *get_acknowledge(void *args)
 {
     char message[256] = {0};

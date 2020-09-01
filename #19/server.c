@@ -51,6 +51,10 @@ static void *send_command(void *args);
  *                FUNCTIONS DEFINITION                        *
  **************************************************************/
 
+/**
+ * @brief     This function uses mutex to set a value to a variable from a critical section.
+ * @param[in] value - is used to set the value of stop variable
+ */
 static void set_stop(bool value)
 {
     pthread_mutex_lock(&lock);
@@ -58,6 +62,10 @@ static void set_stop(bool value)
     pthread_mutex_unlock(&lock);
 }
 
+/**
+ * @brief     This function uses mutex to set a value to a variable from a critical section.
+ * @param[in] value - is used to set the value of run variable
+ */
 static void set_run(bool value)
 {
     pthread_mutex_lock(&lock);
@@ -65,6 +73,10 @@ static void set_run(bool value)
     pthread_mutex_unlock(&lock);
 }
 
+/**
+ * @brief     This function uses mutex to set a value to a variable from a critical section.
+ * @param[in] value - is used to set the value of send_cmd variable
+ */
 static void set_cmd(bool value)
 {
     pthread_mutex_lock(&lock);
@@ -72,6 +84,10 @@ static void set_cmd(bool value)
     pthread_mutex_unlock(&lock);
 }
 
+/**
+ * @brief  This function uses mutex to access a critical section (stop variable).
+ * @return true / false
+ */
 static bool get_stop()
 {
     bool local_stop = false;
@@ -83,6 +99,10 @@ static bool get_stop()
     return local_stop;
 }
 
+/**
+ * @brief  This function uses mutex to access a critical section (run variable).
+ * @return true / false
+ */
 static bool get_run()
 {
     bool local_run = false;
@@ -94,6 +114,10 @@ static bool get_run()
     return local_run;
 }
 
+/**
+ * @brief  This function uses mutex to access a critical section (send_command variable).
+ * @return true / false
+ */
 static bool get_cmd()
 {
     bool local_cmd = false;
@@ -105,6 +129,11 @@ static bool get_cmd()
     return local_cmd;
 }
 
+/**
+ * @brief     This functions reads from the keyboard the command and validates it before is going to be sent to the client.
+ * @param[in] args -> NULL
+ * @return    NULL
+ */
 static void *send_command(void *args)
 {   
     int k             = 0;
@@ -171,6 +200,11 @@ static void *send_command(void *args)
     }
 }
 
+/**
+ * @brief     This function sends a command to the clients and waits for his ACK and state response.
+ * @param[in] args - Client's socket.
+ * @return    NULL
+ */
 static void *get_acknowledge(void *args)
 {
     char message[256] = {0};
